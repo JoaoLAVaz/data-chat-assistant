@@ -71,11 +71,13 @@ The planned next steps are:
 
 
 Install using:
+
     git clone https://github.com/JoaoLAVaz/data-chat-assistant
 
     cd data-science-chat-assistant
-    
+
     pip install -r requirements.txt
 
 and run:
+
     python app_gradio.py
