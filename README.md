@@ -35,7 +35,7 @@ Pandas – data manipulation
 
 Matplotlib – plots
 
-OpenAI API – LLM-powered agents
+OpenAI API – LLM-powered agents using tools
 
 
 # Project Roadmap 
