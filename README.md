@@ -61,18 +61,19 @@ The planned next steps are:
 
 # Project Structure
 .
-├── agents/                  # LLM agents for specific tasks
-├── utils/                   # Helper functions
-├── datasets/                # Sample CSV datasets
-├── app_gradio.py            # Main Gradio app
-├── requirements.txt         # Python dependencies
-├── environment.yml          # Conda environment file
-└── README.md
+ agents/                  # LLM agents for specific tasks
+ utils/                   # Helper functions
+ datasets/                # Sample CSV datasets
+ app_gradio.py            # Main Gradio app
+ requirements.txt         # Python dependencies
+ environment.yml          # Conda environment file
+ README.md
 
 
 Install using:
-git clone https://github.com/JoaoLAVaz/data-chat-assistant
-cd data-science-chat-assistant
-pip install -r requirements.txt
+    git clone https://github.com/JoaoLAVaz/data-chat-assistant
+    cd data-science-chat-assistant
+    pip install -r requirements.txt
 
-and run: python app_gradio.py
+and run:
+    python app_gradio.py
