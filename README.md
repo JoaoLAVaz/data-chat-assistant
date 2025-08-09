@@ -60,14 +60,14 @@ The planned next steps are:
 
 
 # Project Structure
-.
- agents/                  # LLM agents for specific tasks
- utils/                   # Helper functions
- datasets/                # Sample CSV datasets
- app_gradio.py            # Main Gradio app
- requirements.txt         # Python dependencies
- environment.yml          # Conda environment file
- README.md
+    .
+    agents/                  # LLM agents for specific tasks
+    utils/                   # Helper functions
+    datasets/                # Sample CSV datasets
+    app_gradio.py            # Main Gradio app
+    requirements.txt         # Python dependencies
+    environment.yml          # Conda environment file
+    README.md
 
 
 Install using:
