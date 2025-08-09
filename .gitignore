@@ -1,0 +1,19 @@
+# Secrets
+.env
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Jupyter stuff
+.ipynb_checkpoints/
+.virtual_documents/
+app.ipynb
+
+# OS files
+.DS_Store
