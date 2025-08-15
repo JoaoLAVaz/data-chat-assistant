@@ -74,7 +74,7 @@ Install using:
 
     git clone https://github.com/JoaoLAVaz/data-chat-assistant
 
-    cd data-science-chat-assistant
+    cd data-chat-assistant
 
     pip install -r requirements.txt
 
