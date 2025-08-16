@@ -152,7 +152,7 @@ def chat(
                         test_info["value_col"],
                         return_plot=True
                     )
-                    plot_path = result.get("plot_path")
+                    plot_path = result_raw.get("plot_path")
                     result = interpret_test_result(
                         "anova",
                         dataset_summary,
@@ -167,7 +167,7 @@ def chat(
                         args["value_col"],
                         return_plot=True
                     )
-                    plot_path = result.get("plot_path")
+                    plot_path = result_raw.get("plot_path")
                     result = interpret_test_result(
                         "anova",
                         dataset_summary,
@@ -221,7 +221,7 @@ def chat(
                         value_col=test_info["value_col"],
                         return_plot = True
                     )
-                    plot_path = result.get("plot_path")
+                    plot_path = result_raw.get("plot_path")
                     result = interpret_test_result(
                         "chi-squared",
                         dataset_summary,
@@ -236,7 +236,7 @@ def chat(
                         value_col=args["value_col"],
                         return_plot = True
                     )
-                    plot_path = result.get("plot_path")
+                    plot_path = result_raw.get("plot_path")
                     result = interpret_test_result(
                         "chi-squared",
                         dataset_summary,
@@ -260,7 +260,7 @@ def chat(
                         method=test_info.get("method", "pearson"),
                         return_plot = True
                     )
-                    plot_path = result.get("plot_path")
+                    plot_path = result_raw.get("plot_path")
                     result = interpret_test_result(
                         "correlation",
                         dataset_summary,
@@ -276,7 +276,7 @@ def chat(
                         method=args.get("method", "pearson"),
                         return_plot = True
                     )
-                    plot_path = result.get("plot_path")
+                    plot_path = result_raw.get("plot_path")
                     result = interpret_test_result(
                         "correlation",
                         dataset_summary,
