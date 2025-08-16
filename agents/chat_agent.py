@@ -240,7 +240,7 @@ def chat(
                     result = interpret_test_result(
                         "chi-squared",
                         dataset_summary,
-                        args
+                        args,
                         result_raw
                     )
 
