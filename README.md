@@ -1,8 +1,10 @@
 # data-chat-assistant
 Interactive data science assistant powered by LLMs. Upload CSVs, explore datasets, and run statistical tests via natural language. Built with an agent-based architecture. A personal project to explore data science and LLM tools, including statistics and data science techniques, API and open-source LLMs, RAG, fine-tuning, etc.
 
+## Demo
+[![Watch the demo](https://img.youtube.com/vi/LIuPb356QhI/0.jpg)](https://youtu.be/LIuPb356QhI)
 
-# Minimum Viable Product features
+## Minimum Viable Product features
 
 CSV upload & automatic structure analysis
 
@@ -25,7 +27,7 @@ Plot generation where relevant
 Agentized workflow for modular, extensible design
 
 
-# Tech Stack
+## Tech Stack
 
 Python
 
@@ -38,7 +40,7 @@ Matplotlib – plots
 OpenAI API – LLM-powered agents using tools
 
 
-# Project Roadmap 
+## Project Roadmap 
 
 This MVP focuses on statistical analysis and dataset exploration on a basic level.
 Upcoming version will add to the existing features.
@@ -59,7 +61,7 @@ The planned next steps are:
     QLoRA fine-tuning for specialized analysis
 
 
-# Project Structure
+## Project Structure
     .
     agents/                  # LLM agents for specific tasks
     utils/                   # Helper functions
