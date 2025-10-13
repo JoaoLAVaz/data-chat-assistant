@@ -44,3 +44,5 @@ sentence_transformers
 feedparser
 statsmodels
 seaborn
+langgraph
+pingouin
