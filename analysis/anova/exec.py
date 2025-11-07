@@ -26,6 +26,7 @@ matplotlib.use("Agg")  # headless
 import matplotlib.pyplot as plt
 
 from analysis.shared.stats_tests import shapiro_by_group, levene_test
+from analysis.shared.schema import SCHEMA_VERSION  
 
 
 # -----------------------------
@@ -133,8 +134,6 @@ def _welch_anova(groups: List[np.ndarray]) -> Tuple[float, float, float, float]:
 
     # df1, df2 (Satterthwaite)
     df1 = k - 1
-    # Compute df2 using standard Welch ANOVA approximation
-    # Following: df2 = (k^2 - 1) / (3 * sum( (1/(n_i - 1)) * (1 - w_i/sum_w)^2 ))
     denom_df = np.sum(((1 / (ns - 1)) * (1 - (w / np.sum(w)))**2))
     df2 = (k**2 - 1) / (3 * denom_df) if denom_df > 0 else np.inf
 
@@ -154,25 +153,32 @@ def anova_impl(
     value_col: str,
     equal_var: bool = False,         # user override: force classic ANOVA (ignore Levene for choice)
     nonparametric: bool = False,     # user override: force Kruskal–Wallis
+    missing_report: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
     One-way comparison across 3+ groups with assumption checks and branching.
     """
     # --- Validate types ---
     if group_col not in metadata:
-        return {"error": f"Column '{group_col}' not found in dataset"}
+        return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
+                "error": f"Column '{group_col}' not found in dataset"}
     if value_col not in metadata:
-        return {"error": f"Column '{value_col}' not found in dataset"}
+        return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
+                "error": f"Column '{value_col}' not found in dataset"}
     if metadata[group_col] != "categorical":
-        return {"error": f"'{group_col}' should be categorical, but is {metadata[group_col]}"}
+        return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
+                "error": f"'{group_col}' should be categorical, but is {metadata[group_col]}"}
     if metadata[value_col] != "numerical":
-        return {"error": f"'{value_col}' should be numerical, but is {metadata[value_col]}"}
+        return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
+                "error": f"'{value_col}' should be numerical, but is {metadata[value_col]}"}
 
     # Required data (assume upstream missing-data handled)
     data = df[[group_col, value_col]].copy()
     na_counts = data.isna().sum().to_dict()
     if int(sum(na_counts.values())) > 0:
         return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "anova",
             "error": "Missing values detected in required columns after preprocessing.",
             "details": {"missing_by_column": {k: int(v) for k, v in na_counts.items()}},
         }
@@ -180,7 +186,8 @@ def anova_impl(
     # Group arrays
     levels = list(pd.Index(data[group_col].unique()))
     if len(levels) < 3:
-        return {"error": f"ANOVA expects 3+ groups; found {len(levels)}: {levels}"}
+        return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
+                "error": f"ANOVA expects 3+ groups; found {len(levels)}: {levels}"}
 
     # Build arrays in deterministic order
     levels = sorted(levels)
@@ -189,7 +196,8 @@ def anova_impl(
     # Check minimal sizes
     too_small = [lvl for lvl, arr in zip(levels, groups) if arr.size < 2]
     if too_small:
-        return {"error": "Each group needs at least 2 observations.",
+        return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
+                "error": "Each group needs at least 2 observations.",
                 "too_small_groups": too_small}
 
     # Group summaries block
@@ -213,7 +221,9 @@ def anova_impl(
             eps2 = _kruskal_epsilon_squared(H, n=sum(len(g) for g in groups), k=len(groups))
             title = f"Kruskal–Wallis: {group_col} on {value_col}"
             plot_path = _violin_multi_plot_to_tempfile(groups, levels, ylabel=value_col, title=title)
-            return {
+            result = {
+                "schema_version": SCHEMA_VERSION,
+                "test_family": "anova",
                 "chosen_test": "kruskal_wallis",
                 "test_name": "Kruskal–Wallis H",
                 "stats": {"H": float(H), "p_value": float(p), "df": len(groups) - 1},
@@ -224,8 +234,12 @@ def anova_impl(
                 "warnings": warnings,
                 "plot_path": plot_path,
             }
+            if missing_report:
+                result["missing_data_report"] = missing_report  
+            return result
         except Exception as e:
-            return {"error": f"Kruskal–Wallis failed: {e.__class__.__name__}", "details": str(e)}
+            return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
+                    "error": f"Kruskal–Wallis failed: {e.__class__.__name__}", "details": str(e)}
 
     # Normality per group
     stacked = pd.DataFrame({group_col: np.repeat(levels, [len(g) for g in groups]),
@@ -243,7 +257,9 @@ def anova_impl(
             eps2 = _kruskal_epsilon_squared(H, n=sum(len(g) for g in groups), k=len(groups))
             title = f"Kruskal–Wallis: {group_col} on {value_col}"
             plot_path = _violin_multi_plot_to_tempfile(groups, levels, ylabel=value_col, title=title)
-            return {
+            result = {
+                "schema_version": SCHEMA_VERSION,
+                "test_family": "anova",
                 "chosen_test": "kruskal_wallis",
                 "test_name": "Kruskal–Wallis H",
                 "stats": {"H": float(H), "p_value": float(p), "df": len(groups) - 1},
@@ -254,12 +270,15 @@ def anova_impl(
                 "warnings": warnings,
                 "plot_path": plot_path,
             }
+            if missing_report:
+                result["missing_data_report"] = missing_report  
+            return result
         except Exception as e:
-            return {"error": f"Kruskal–Wallis failed: {e.__class__.__name__}",
+            return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
+                    "error": f"Kruskal–Wallis failed: {e.__class__.__name__}",
                     "details": str(e), "assumptions": {"normality": normality}}
 
     # Variance homogeneity: Levene/Brown–Forsythe
-    # Build tall DF for shared test
     lev = levene_test(stacked, group_col, value_col, center="median")
 
     # Decide classic vs Welch ANOVA
@@ -275,7 +294,8 @@ def anova_impl(
         try:
             F, p = stats.f_oneway(*groups)
         except Exception as e:
-            return {"error": f"ANOVA failed: {e.__class__.__name__}",
+            return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
+                    "error": f"ANOVA failed: {e.__class__.__name__}",
                     "assumptions": {"normality": normality, "variance": lev}}
 
         # Effect sizes
@@ -283,10 +303,13 @@ def anova_impl(
         title = f"One-way ANOVA: {group_col} on {value_col}"
         plot_path = _violin_multi_plot_to_tempfile(groups, levels, ylabel=value_col, title=title)
 
-        return {
+        result = {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "anova",
             "chosen_test": "anova",
             "test_name": "One-way ANOVA",
-            "stats": {"F": float(F), "p_value": float(p), "df1": len(groups) - 1, "df2": int(sum(len(g) for g in groups) - len(groups))},
+            "stats": {"F": float(F), "p_value": float(p), "df1": len(groups) - 1,
+                      "df2": int(sum(len(g) for g in groups) - len(groups))},
             "effect_size": {"name": "eta_squared/omega_squared",
                             "eta_squared": eff["eta_squared"],
                             "omega_squared": eff["omega_squared"]},
@@ -295,12 +318,16 @@ def anova_impl(
             "warnings": warnings,
             "plot_path": plot_path,
         }
+        if missing_report:
+            result["missing_data_report"] = missing_report  
+        return result
     else:
         # Welch's ANOVA
         try:
             F, p, df1, df2 = _welch_anova(groups)
         except Exception as e:
-            return {"error": f"Welch's ANOVA failed: {e.__class__.__name__}",
+            return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
+                    "error": f"Welch's ANOVA failed: {e.__class__.__name__}",
                     "assumptions": {"normality": normality, "variance": lev}}
 
         # Approximate eta^2 using between/total from group means (not exact under Welch)
@@ -308,13 +335,19 @@ def anova_impl(
         title = f"Welch's ANOVA: {group_col} on {value_col}"
         plot_path = _violin_multi_plot_to_tempfile(groups, levels, ylabel=value_col, title=title)
 
-        return {
+        result = {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "anova",
             "chosen_test": "welch_anova",
             "test_name": "Welch's ANOVA",
             "stats": {"F": float(F), "p_value": float(p), "df1": float(df1), "df2": float(df2)},
-            "effect_size": {"name": "eta_squared", "eta_squared": eff["eta_squared"], "note": "Approximate under Welch."},
+            "effect_size": {"name": "eta_squared", "eta_squared": eff["eta_squared"],
+                            "note": "Approximate under Welch."},
             "groups": groups_block,
             "assumptions": {"normality": normality, "variance": lev},
             "warnings": warnings,
             "plot_path": plot_path,
         }
+        if missing_report:
+            result["missing_data_report"] = missing_report  
+        return result

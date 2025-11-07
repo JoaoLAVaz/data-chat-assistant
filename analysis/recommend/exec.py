@@ -17,6 +17,9 @@ from __future__ import annotations
 from typing import Dict, Any, List, Tuple, Optional
 import numpy as np
 import pandas as pd
+import math
+
+SCHEMA_VERSION = "1.0"
 
 # ---------------------------
 # Utilities: column stats
@@ -43,6 +46,69 @@ def _basic_col_profile(df: pd.DataFrame, metadata: Dict[str, str]) -> Dict[str, 
             "std": std,
         }
     return prof
+
+
+def _missing_rate(series: pd.Series) -> float:
+    return float(series.isna().mean())
+
+
+def _safe_std(series: pd.Series) -> float:
+    s = pd.to_numeric(series, errors="coerce")
+    return float(np.nanstd(s, ddof=1)) if s.notna().sum() >= 2 else 0.0
+
+
+def _unique_count(series: pd.Series) -> int:
+    return int(pd.to_numeric(series, errors="coerce").nunique(dropna=True))
+
+
+def _pairwise_abs_corr(dfnum: pd.DataFrame) -> float:
+    """Mean absolute pairwise correlation (excluding diagonal). Returns 0 if not computable."""
+    try:
+        if dfnum.shape[1] < 2:
+            return 0.0
+        c = dfnum.corr(numeric_only=True)
+        m = c.values
+        n = m.shape[0]
+        idx = np.triu_indices(n, k=1)
+        vals = np.abs(m[idx])
+        vals = vals[np.isfinite(vals)]
+        return float(vals.mean()) if vals.size else 0.0
+    except Exception:
+        return 0.0
+
+
+def _score_feature_set(df: pd.DataFrame, feats: List[str]) -> float:
+    """
+    Heuristic score for a candidate clustering feature set.
+    - higher average std is better
+    - moderate correlations (not all 0.99) preferred
+    - penalize missingness
+    """
+    sub = df[feats].apply(pd.to_numeric, errors="coerce")
+    stds = [_safe_std(sub[c]) for c in feats]
+    avg_std = float(np.mean(stds)) if stds else 0.0
+
+    mean_abs_corr = _pairwise_abs_corr(sub)  # 0..1
+    # prefer some correlation but not extremely high; transform to reward ~0.5
+    corr_bonus = 1.0 - abs(mean_abs_corr - 0.5)  # peak at 0.5
+
+    miss_rates = [_missing_rate(sub[c]) for c in feats]
+    miss_penalty = float(np.mean(miss_rates))  # 0..1 (lower is better)
+
+    return max(0.0, avg_std * (0.5 + 0.5 * corr_bonus) * (1.0 - miss_penalty))
+
+
+def _prefix_buckets(cols: List[str]) -> Dict[str, List[str]]:
+    """
+    Group columns by simple prefix before first underscore.
+    Example: 'lab_ldh' and 'lab_crp' -> bucket 'lab'.
+    """
+    buckets: Dict[str, List[str]] = {}
+    for c in cols:
+        if "_" in c:
+            pfx = c.split("_", 1)[0]
+            buckets.setdefault(pfx, []).append(c)
+    return {k: v for k, v in buckets.items() if len(v) >= 2}
 
 
 # ---------------------------
@@ -152,6 +218,81 @@ def _candidates_chisq(df: pd.DataFrame, meta: Dict[str, str], prof: Dict[str, Di
     return out
 
 
+# --------- NEW: clustering candidates ----------------------------------------
+
+def _prefix_groups(cols: List[str]) -> Dict[str, List[str]]:
+    """Same as _prefix_buckets but kept separate for clarity in this section."""
+    return _prefix_buckets(cols)
+
+def _candidates_clustering(df: pd.DataFrame, meta: Dict[str, str], prof: Dict[str, Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Clustering (K-means):
+    - Select numeric features with acceptable missingness (<70%) and variation (unique >= 3).
+    - Propose several candidate feature sets:
+        * top-variance sets (size 3..5)
+        * thematic prefix buckets (>=2 features)
+        * a domain-smart set if present (age, pack_years, performance_status, bmi, weight, height)
+    - Score with a simple heuristic to rank later by LLM.
+    """
+    numeric_cols = [c for c, t in meta.items() if t == "numerical" and c in df.columns]
+    if len(numeric_cols) < 2:
+        return []
+
+    # Filter by missingness & variation
+    filtered: List[str] = []
+    for c in numeric_cols:
+        s = pd.to_numeric(df[c], errors="coerce")
+        if _missing_rate(s) >= 0.70:
+            continue
+        if _unique_count(s) < 3:
+            continue
+        filtered.append(c)
+
+    if len(filtered) < 2:
+        return []
+
+    # (a) top-variance sets
+    var_sorted = sorted(filtered, key=lambda c: _safe_std(df[c]), reverse=True)
+    top_names = var_sorted[:8]
+    cand_sets: List[List[str]] = []
+    for size in (3, 4, 5):
+        if len(top_names) >= size:
+            cand_sets.append(top_names[:size])
+
+    # (b) thematic prefix buckets
+    buckets = _prefix_groups(filtered)
+    for _, cols in buckets.items():
+        cols_sorted = sorted(cols, key=lambda c: _safe_std(df[c]), reverse=True)[:5]
+        if len(cols_sorted) >= 2:
+            cand_sets.append(cols_sorted)
+
+    # (c) domain-smart
+    domain = ["age", "pack_years", "performance_status", "bmi", "weight", "height"]
+    domain_set = [c for c in domain if c in filtered]
+    if len(domain_set) >= 2:
+        cand_sets.append(domain_set[:5])
+
+    # de-duplicate
+    seen = set()
+    uniq_sets: List[List[str]] = []
+    for s in cand_sets:
+        key = tuple(sorted(s))
+        if key not in seen:
+            seen.add(key)
+            uniq_sets.append(list(key))
+
+    out: List[Dict[str, Any]] = []
+    for feats in uniq_sets:
+        score = _score_feature_set(df, feats)
+        out.append({
+            "test_family": "clustering",
+            "features": feats,
+            "score": float(score),
+            "n_features": len(feats),
+        })
+    return out
+
+
 # ---------------------------
 # Ranking / phrasing (LLM)
 # ---------------------------
@@ -169,12 +310,14 @@ def _rank_with_llm(
       - short_title
       - rationale
       - variables (family-specific)
+      - (optional) suggested_params for clustering
     """
     if not candidates:
         return []
 
-    # Compact candidate summary sent to the model
     family = test_family.lower()
+
+    # Compact candidate summary sent to the model
     brief_items = []
     for c in candidates:
         if family in ("t_test", "anova"):
@@ -188,27 +331,48 @@ def _rank_with_llm(
             brief_items.append({
                 "var1": c["var1"], "var2": c["var2"], "n_pairs": c.get("n_pairs")
             })
-        else:  # chi_square
+        elif family == "chi_square":
             brief_items.append({
                 "var1": c["var1"], "var2": c["var2"],
                 "levels_var1": c.get("levels_var1", []),
                 "levels_var2": c.get("levels_var2", []),
                 "n_pairs": c.get("n_pairs"),
             })
+        else:  # clustering
+            brief_items.append({
+                "features": c["features"],
+                "n_features": c.get("n_features", len(c["features"])),
+                "score": float(c.get("score", 0.0)),
+            })
 
-    # Use OpenAI (or whatever your environment provides). Keep isolated.
+    # Use OpenAI (or whatever your environment provides). Kept isolated.
     try:
         from langchain_openai import ChatOpenAI
         from langchain_core.messages import SystemMessage, HumanMessage
+        import json, re
 
         sys = SystemMessage(content=(
-            "You are a biostatistics assistant. You will receive a dataset topic and a list of "
-            "feasible candidate analyses for a specified test family. Rank the candidates by potential "
-            "scientific interest and clarity of interpretation for exploratory analysis. Prefer clinically "
-            "meaningful outcomes (survival, response), established prognostic features (stage, histology, "
-            "treatment), and avoid trivial/demographic-only analyses unless none other exist. "
-            "Return top K as JSON with fields: short_title, rationale (<=25 words), and the variable mapping. "
-            "Do not invent variables not present."
+            "You are a data analysis assistant. You will receive a brief dataset topic/industry hint and a list of "
+            "feasible candidate analyses for a specified test family. Rank the candidates by (1) potential insight for the "
+            "stated context, (2) clarity/interpretability, and (3) data adequacy.\n\n"
+            "General guidance:\n"
+            "- Prefer analyses that relate predictors to meaningful outcomes or KPIs (e.g., revenue, conversion, churn, "
+            "defect rate, lead time, satisfaction, survival) when applicable.\n"
+            "- Prefer domain-relevant predictors (e.g., treatment/stage in healthcare; campaign/segment in marketing; "
+            "category/price in retail; device/region/feature-use in product analytics; grade/attendance in education; "
+            "sensor/line settings in manufacturing). Avoid trivial demographic-only analyses unless context suggests value.\n"
+            "- Penalize very small overlap/sample sizes, ultra-sparse contingency tables, and extremely high-cardinality "
+            "categoricals that harm interpretability.\n"
+            "- When the family is 'clustering', favor small (2–5), interpretable, non-redundant numeric feature sets with "
+            "reasonable variation and low missingness. Prefer sets that could map to actionable segments in the given context.\n\n"
+            "Output: Return the top K recommendations as JSON (a list). Each item must include:\n"
+            "  - short_title: concise, human-friendly test description\n"
+            "  - rationale: ≤25 words on why it's interesting/useful\n"
+            "  - variables: the exact variable mapping required by the family (do NOT invent names)\n"
+            "For clustering items, also include:\n"
+            "  - suggested_params: {\"method\":\"kmeans\",\"n_clusters\":\"auto\",\"k_range\":[2,4]} "
+            "(adjust k_range only if the feature set clearly implies a different small range).\n"
+            "Do not output anything except the JSON list."
         ))
         user = HumanMessage(content=(
             f"Dataset topic: {dataset_hint or 'N/A'}\n"
@@ -217,24 +381,26 @@ def _rank_with_llm(
             f"Candidates (JSON): {brief_items}"
         ))
 
-        llm = ChatOpenAI(model=model_name, temperature=0.2, max_tokens=600)
+        llm = ChatOpenAI(model=model_name, temperature=0.2, max_tokens=700)
         resp = llm.invoke([sys, user])
         text = resp.content or ""
 
-        # Try to parse JSON-like list. Be forgiving.
-        import json, re
         m = re.search(r"\[.*\]", text, flags=re.S)
         parsed = json.loads(m.group(0)) if m else json.loads(text)
-        # Ensure list and clamp to top_k
         recs = parsed if isinstance(parsed, list) else []
         return recs[:top_k]
     except Exception:
-        # Fallback: crude lexical ranking and simple phrasing
-        def score_item(it: Dict[str, Any]) -> int:
-            name_blob = " ".join(map(str, it.values())).lower()
-            # Boost common clinical outcomes & predictors
+        # Fallback: crude scoring
+        def score_item(it: Dict[str, Any]) -> float:
+            blob = " ".join(map(str, it.values())).lower()
             boosts = ["survival", "response", "treatment", "stage", "histology", "progression"]
-            return sum(word in name_blob for word in boosts) + int(it.get("n_pairs", 0) // 50)
+            base = sum(w in blob for w in boosts) + float(it.get("n_pairs", 0)) / 50.0
+            if family == "clustering":
+                # prefer fewer features (2–4), and use given 'score' as heuristic
+                nf = it.get("n_features", 3)
+                feat_bonus = 1.0 if 2 <= nf <= 4 else 0.5
+                base += feat_bonus + float(it.get("score", 0.0))
+            return base
 
         ranked = sorted(brief_items, key=score_item, reverse=True)[:top_k]
         out = []
@@ -242,16 +408,27 @@ def _rank_with_llm(
             if family in ("t_test", "anova"):
                 title = f"{it['group_col']} → {it['value_col']}"
                 vars_map = {"group_col": it["group_col"], "value_col": it["value_col"]}
+                extra = {}
             elif family == "correlation":
                 title = f"{it['var1']} ↔ {it['var2']}"
                 vars_map = {"var1": it["var1"], "var2": it["var2"]}
-            else:
+                extra = {}
+            elif family == "chi_square":
                 title = f"{it['var1']} × {it['var2']}"
                 vars_map = {"var1": it["var1"], "var2": it["var2"]}
+                extra = {}
+            else:
+                feats = it.get("features", [])
+                title = f"K-Means on {', '.join(feats[:3])}" + ("" if len(feats) <= 3 else f" + {len(feats)-3} more")
+                vars_map = {"features": feats}
+                extra = {
+                    "suggested_params": {"method": "kmeans", "n_clusters": "auto", "k_range": [2, 4]}
+                }
             out.append({
                 "short_title": title,
-                "rationale": "Likely clinically meaningful; adequate sample size.",
+                "rationale": "Likely interpretable; adequate sample/variation.",
                 "variables": vars_map,
+                **extra
             })
         return out
 
@@ -269,10 +446,14 @@ def recommend_tests_impl(
     # Optional knobs for later OSS+RAG swap:
     model_name: str = "gpt-4o-mini",
     dataset_hint: Optional[str] = None,
+    missing_report: Optional[Dict[str, Any]] = None,  # <--- added (ignored)
 ) -> Dict[str, Any]:
     """
     Build feasible candidates and rank + phrase them.
     """
+    # missing_report is accepted to keep a uniform tool-call signature; not used here.
+    _ = missing_report
+
     prof = _basic_col_profile(df, metadata)
 
     family = test_family.lower()
@@ -284,14 +465,27 @@ def recommend_tests_impl(
         cands = _candidates_correlation(df, metadata, prof)
     elif family == "chi_square":
         cands = _candidates_chisq(df, metadata, prof)
+    elif family == "clustering":
+        cands = _candidates_clustering(df, metadata, prof)
     else:
         return {"error": f"Unknown test_family: {test_family}"}
 
     if not cands:
-        return {"recommendations": [], "note": "No feasible candidates found under basic screening rules."}
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": family,
+            "recommendations": [],
+            "items": [],
+            "note": "No feasible candidates found under basic screening rules."
+        }
 
-    recs = _rank_with_llm(model_name=model_name, dataset_hint=dataset_hint,
-                          test_family=family, candidates=cands, top_k=top_k)
+    recs = _rank_with_llm(
+        model_name=model_name,
+        dataset_hint=dataset_hint,
+        test_family=family,
+        candidates=cands,
+        top_k=top_k
+    )
 
     # Normalize output structure
     normed: List[Dict[str, Any]] = []
@@ -299,16 +493,22 @@ def recommend_tests_impl(
         title = r.get("short_title") or r.get("title") or ""
         rationale = r.get("rationale") or ""
         variables = r.get("variables") or {}
-        normed.append({
+        item: Dict[str, Any] = {
             "test_family": family,
             "short_title": title,
             "rationale": rationale,
             "variables": variables,
-        })
+        }
+        # pass through clustering suggested params if present
+        if family == "clustering" and "suggested_params" in r:
+            item["suggested_params"] = r["suggested_params"]
+        normed.append(item)
 
     return {
+        "schema_version": SCHEMA_VERSION,
         "test_family": family,
         "recommendations": normed,
+        "items": normed,
         "candidates_considered": len(cands),
         "top_k": top_k,
     }

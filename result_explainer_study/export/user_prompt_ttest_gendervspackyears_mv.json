@@ -1,0 +1,168 @@
+{
+  "schema_version": "1.0",
+  "test_family": "t_test",
+  "chosen_test": "mann_whitney",
+  "test_name": "Mann\u2013Whitney U",
+  "stats": {
+    "U": 849.5,
+    "p_value": 1.0438300244704652e-05,
+    "method": "auto"
+  },
+  "effect_size": {
+    "name": "rank_biserial",
+    "value": 0.4770698676515851,
+    "note": null
+  },
+  "groups": {
+    "group1": {
+      "name": "F",
+      "n": 57,
+      "mean": 14.535820261759163,
+      "sd": 13.624792526883839,
+      "median": 15.0,
+      "iqr": 25.0
+    },
+    "group2": {
+      "name": "M",
+      "n": 57,
+      "mean": 32.23456221742744,
+      "sd": 22.6035898874997,
+      "median": 39.214742877784474,
+      "iqr": 46.53626747927078
+    }
+  },
+  "assumptions": {
+    "normality": {
+      "per_group": {
+        "F": {
+          "n": 57,
+          "stat": 0.9503497321880394,
+          "p": 0.02039962608306243,
+          "ok": false,
+          "note": null
+        },
+        "M": {
+          "n": 57,
+          "stat": 0.8736282146065892,
+          "p": 2.525339154265025e-05,
+          "ok": false,
+          "note": null
+        }
+      },
+      "any_non_normal": true,
+      "tested_groups": 2,
+      "notes": []
+    },
+    "variance": {
+      "note": "Not applicable for Mann\u2013Whitney."
+    }
+  },
+  "warnings": [],
+  "plot_path": "C:\\Users\\PC\\AppData\\Local\\Temp\\ttest_ka9hzng4.png",
+  "missing_data_report": {
+    "columns": [
+      "gender",
+      "pack_years"
+    ],
+    "rows_before": 114,
+    "total_missing": 60,
+    "missing_by_column": {
+      "gender": 0,
+      "pack_years": 60
+    },
+    "missing_rate": 0.2631578947368421,
+    "policy": "simple_impute",
+    "alpha": 0.05,
+    "scope": "hybrid",
+    "mcar": {
+      "available": false,
+      "stat": null,
+      "df": null,
+      "p": null,
+      "note": "No MCAR function found in this Pingouin version.",
+      "numeric_cols_used": [
+        "pack_years",
+        "age",
+        "performance_status",
+        "progression_free_survival_months",
+        "overall_survival_months"
+      ]
+    },
+    "mcar_proxy": {
+      "available": true,
+      "method": "chi2",
+      "p": 0.09137393673644496,
+      "note": null
+    },
+    "imputations": {
+      "gender": {
+        "strategy": "mode",
+        "value": "F"
+      },
+      "pack_years": {
+        "strategy": "iterative"
+      }
+    },
+    "warning": "Moderate missingness (> impute_threshold). Used imputation; results may be sensitive to imputation assumptions.",
+    "config": {
+      "impute_threshold": 0.2,
+      "extreme_threshold": 0.5,
+      "force_impute": false,
+      "max_cat_cardinality": 50,
+      "max_pred_missing": 0.5
+    },
+    "predictors": {
+      "selected": [
+        "age",
+        "gender",
+        "smoking_history",
+        "histology",
+        "stage",
+        "tnm_classification",
+        "primary_location",
+        "performance_status",
+        "weight_loss",
+        "comorbidities",
+        "treatment_type",
+        "chemotherapy_regimen",
+        "response",
+        "progression_free_survival_months",
+        "overall_survival_months",
+        "status"
+      ],
+      "dropped": [
+        {
+          "name": "patient_id",
+          "reason": "high_cardinality(114)"
+        },
+        {
+          "name": "diagnosis_date",
+          "reason": "high_cardinality(110)"
+        },
+        {
+          "name": "surgery_type",
+          "reason": "missing_rate>0.50"
+        },
+        {
+          "name": "radiation_dose_gy",
+          "reason": "missing_rate>0.50"
+        },
+        {
+          "name": "targeted_therapy",
+          "reason": "missing_rate>0.50"
+        },
+        {
+          "name": "immunotherapy",
+          "reason": "missing_rate>0.50"
+        }
+      ],
+      "encoded_features": 80
+    },
+    "imputer_details": {
+      "n_features": 81,
+      "max_iter": 10
+    },
+    "rows_after": 114,
+    "rows_dropped": 0
+  }
+}

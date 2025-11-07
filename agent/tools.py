@@ -14,10 +14,11 @@ from typing import List, Optional, Literal
 from langchain_core.tools import tool, BaseTool
 
 
-
-
 @tool
-def recommend_tests(test_family: Literal["t_test", "anova", "correlation", "chi_square"], top_k: int = 5) -> str:
+def recommend_tests(
+    test_family: Literal["t_test", "anova", "correlation", "chi_square", "clustering"],
+    top_k: int = 5
+) -> str:
     """
     Recommend interesting AND feasible tests for a given family.
 
@@ -25,19 +26,18 @@ def recommend_tests(test_family: Literal["t_test", "anova", "correlation", "chi_
     state-aware node so it can access df/metadata and (later) an OSS LLM + RAG.
 
     Args:
-        test_family: One of "t_test", "anova", "correlation", "chi_square".
+        test_family: One of "t_test", "anova", "correlation", "chi_square", "clustering".
         top_k: Maximum number of recommendations to return (default 5).
 
     Returns:
         JSON string with a list of recommendations. Each item will typically include:
           - test_family
-          - variables (e.g., {"group_col": "...", "value_col": "..."})
+          - variables (e.g., {"group_col": "...", "value_col": "..."} or {"features": [...]})
           - short_title
           - rationale
           - feasibility_notes (optional)
     """
     return "OK"  # schema only
-
 
 
 @tool
@@ -47,7 +47,7 @@ def t_test(
     equal_var: bool = False,
     group_a: Optional[str] = None,
     group_b: Optional[str] = None
-    ) -> str:
+) -> str:
     """
     Perform a two-sample t-test between two groups in a DataFrame.
     
@@ -139,7 +139,50 @@ def chi_square_test(var1: str, var2: str) -> str:
     return "OK"
 
 
-ALL_TOOLS = [t_test, anova_test, correlation_test, chi_square_test, recommend_tests]
+# ----------------------------
+# NEW: Clustering (KMeans + PCA)
+# ----------------------------
+@tool
+def clustering_kmeans(
+    features: Optional[List[str]] = None,
+    include_categoricals: bool = False,
+    max_cat_cardinality: int = 8,
+    n_clusters: str = "auto",
+    k_min: int = 2,
+    k_max: int = 8
+) -> str:
+    """
+    Cluster rows with K-Means and return an evaluation summary plus a PCA(2D) scatter plot.
+
+    Notes for the planner:
+    - If the user lists variables (e.g., "age, pack_years, performance_status"), pass them via `features`.
+    - If `features` is null, the implementation will auto-select all numerical columns.
+    - If `include_categoricals=True`, low-cardinality categoricals (<= max_cat_cardinality) are one-hot encoded.
+    - `n_clusters` can be an integer encoded as a string (e.g., "3") or "auto" to pick k via silhouette between k_min..k_max.
+
+    Args:
+        features: Optional list of column names to use. If None, use all numeric columns.
+        include_categoricals: Whether to include low-cardinality categorical variables via one-hot.
+        max_cat_cardinality: Max categories allowed to one-hot when include_categoricals=True.
+        n_clusters: "auto" (default) to select k via silhouette, or a stringified integer like "3".
+        k_min: Minimum k when auto-selecting.
+        k_max: Maximum k when auto-selecting.
+
+    Returns:
+        JSON string with clustering diagnostics (chosen k, silhouette, cluster sizes, feature summary)
+        and a temp file path to a PCA(2D) scatter plot.
+    """
+    return "OK"
+
+
+ALL_TOOLS = [
+    t_test,
+    anova_test,
+    correlation_test,
+    chi_square_test,
+    recommend_tests,
+    clustering_kmeans,  
+]
 
 
 def get_all_tools() -> List[BaseTool]:
@@ -150,4 +193,3 @@ def get_all_tools() -> List[BaseTool]:
         List of all tool schemas for binding to LLM
     """
     return ALL_TOOLS
-

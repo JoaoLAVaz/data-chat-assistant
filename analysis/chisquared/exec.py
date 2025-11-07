@@ -25,6 +25,8 @@ import matplotlib
 matplotlib.use("Agg")  # headless
 import matplotlib.pyplot as plt
 
+from analysis.shared.schema import SCHEMA_VERSION  
+
 
 # -----------------------------
 # Helpers
@@ -91,6 +93,7 @@ def chi_square_impl(
     var1: str,
     var2: str,
     alpha: float = 0.05,
+    missing_report: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
     Association test between two categorical variables.
@@ -99,15 +102,19 @@ def chi_square_impl(
     # Validate inputs
     for v in (var1, var2):
         if v not in metadata:
-            return {"error": f"Column '{v}' not found in dataset"}
+            return {"schema_version": SCHEMA_VERSION, "test_family": "chi_square",
+                    "error": f"Column '{v}' not found in dataset"}
         if metadata[v] != "categorical":
-            return {"error": f"'{v}' must be categorical, but is {metadata[v]}"}
+            return {"schema_version": SCHEMA_VERSION, "test_family": "chi_square",
+                    "error": f"'{v}' must be categorical, but is {metadata[v]}"}
 
     # Required data (assume upstream missing-data handled)
     data = df[[var1, var2]].copy()
     na_counts = data.isna().sum().to_dict()
     if int(sum(na_counts.values())) > 0:
         return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "chi_square",
             "error": "Missing values detected in required columns after preprocessing.",
             "details": {"missing_by_column": {k: int(v) for k, v in na_counts.items()}},
         }
@@ -115,14 +122,16 @@ def chi_square_impl(
     # Contingency table (rows=var1 levels, cols=var2 levels)
     ct = pd.crosstab(data[var1], data[var2])
     if ct.empty or ct.values.sum() == 0:
-        return {"error": "Unable to form a valid contingency table (no counts)."}
+        return {"schema_version": SCHEMA_VERSION, "test_family": "chi_square",
+                "error": "Unable to form a valid contingency table (no counts)."}
 
     # Expected counts via chi2_contingency (no correction here; we just want expected)
     try:
         chi2_tmp, p_tmp, dof_tmp, expected = stats.chi2_contingency(ct.values, correction=False)
         expected = np.asarray(expected, dtype=float)
     except Exception as e:
-        return {"error": f"Failed to compute expected counts: {e.__class__.__name__}", "details": str(e)}
+        return {"schema_version": SCHEMA_VERSION, "test_family": "chi_square",
+                "error": f"Failed to compute expected counts: {e.__class__.__name__}", "details": str(e)}
 
     min_expected = float(expected.min()) if expected.size else None
     r, c = ct.shape
@@ -143,13 +152,15 @@ def chi_square_impl(
         try:
             # SciPy fisher_exact supports only 2x2
             oddsratio, p = stats.fisher_exact(ct.values, alternative="two-sided")
-            # For effect size, also compute chi2 for V (using p->chi2 invert is messy);
-            # Instead, compute chi2 from observed/expected directly:
+            # For effect size, compute chi2 from observed/expected to get V
             with np.errstate(divide="ignore", invalid="ignore"):
                 chi2_stat = ((ct.values - expected) ** 2 / expected).sum()
                 chi2_stat = float(chi2_stat) if np.isfinite(chi2_stat) else None
             cramer_v = _cramers_v(chi2_stat if chi2_stat is not None else 0.0, ct.values) if chi2_stat is not None else None
+
             result = {
+                "schema_version": SCHEMA_VERSION,
+                "test_family": "chi_square",
                 "chosen_test": "fisher_exact",
                 "test_name": "Fisher's Exact Test",
                 "stats": {
@@ -163,16 +174,19 @@ def chi_square_impl(
                     "value": cramer_v,
                     "note": "Computed from observed vs expected; Fisher itself has no V.",
                 },
-                "contingency_table": ct.to_dict(),  # for LLM context (row->col->count)
+                "contingency_table": ct.to_dict(),
                 "assumptions": {
                     "expected_frequencies": {"min": min_expected, "rule_of_5_triggered": True, "alpha": alpha}
                 },
                 "warnings": warnings,
                 "plot_path": plot_path,
             }
+            if missing_report:
+                result["missing_data_report"] = missing_report
             return result
         except Exception as e:
-            return {"error": f"Fisher exact failed: {e.__class__.__name__}", "details": str(e)}
+            return {"schema_version": SCHEMA_VERSION, "test_family": "chi_square",
+                    "error": f"Fisher exact failed: {e.__class__.__name__}", "details": str(e)}
 
     # Else Chi-square
     try:
@@ -181,6 +195,8 @@ def chi_square_impl(
         chi2, p, dof, expected2 = stats.chi2_contingency(ct.values, correction=correction)
         cramer_v = _cramers_v(chi2, ct.values)
         result = {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "chi_square",
             "chosen_test": "chi_square",
             "test_name": "Chi-square Test of Independence",
             "stats": {
@@ -203,12 +219,14 @@ def chi_square_impl(
             "warnings": warnings,
             "plot_path": plot_path,
         }
-        # If table is larger than 2x2 and expected <5, we still ran chi-square:
         if (not is_2x2) and (min_expected is not None) and (min_expected < 5):
             warnings.append(
                 "Some expected counts < 5 in a table larger than 2×2; chi-square used (Fisher not available for >2×2). "
                 "Interpret with caution."
             )
+        if missing_report:
+            result["missing_data_report"] = missing_report
         return result
     except Exception as e:
-        return {"error": f"Chi-square failed: {e.__class__.__name__}", "details": str(e)}
+        return {"schema_version": SCHEMA_VERSION, "test_family": "chi_square",
+                "error": f"Chi-square failed: {e.__class__.__name__}", "details": str(e)}

@@ -24,6 +24,8 @@ import matplotlib
 matplotlib.use("Agg")  # headless
 import matplotlib.pyplot as plt
 
+from analysis.shared.schema import SCHEMA_VERSION  
+
 
 # -----------------------------
 # Small helpers
@@ -105,6 +107,7 @@ def correlation_impl(
     var2: str,
     method: str = "auto",  # "auto" | "pearson" | "spearman"
     alpha: float = 0.05,
+    missing_report: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
     Auto-select Pearson vs Spearman based on normality (unless method overrides).
@@ -114,9 +117,11 @@ def correlation_impl(
     # --- Validate inputs/types ---
     for v in (var1, var2):
         if v not in metadata:
-            return {"error": f"Column '{v}' not found in dataset"}
+            return {"schema_version": SCHEMA_VERSION, "test_family": "correlation",
+                    "error": f"Column '{v}' not found in dataset"}
         if metadata[v] != "numerical":
-            return {"error": f"'{v}' must be numerical, but is {metadata[v]}"}
+            return {"schema_version": SCHEMA_VERSION, "test_family": "correlation",
+                    "error": f"'{v}' must be numerical, but is {metadata[v]}"}
 
     data = df[[var1, var2]].copy()
 
@@ -124,6 +129,8 @@ def correlation_impl(
     na_counts = data.isna().sum().to_dict()
     if int(sum(na_counts.values())) > 0:
         return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "correlation",
             "error": "Missing values detected in required columns after preprocessing.",
             "details": {"missing_by_column": {k: int(v) for k, v in na_counts.items()}},
         }
@@ -134,7 +141,8 @@ def correlation_impl(
 
     # Basic sanity: need at least 3 points
     if n < 3:
-        return {"error": "Correlation requires at least 3 paired observations.", "n": n}
+        return {"schema_version": SCHEMA_VERSION, "test_family": "correlation",
+                "error": "Correlation requires at least 3 paired observations.", "n": n}
 
     # Normality checks (only used when method == 'auto')
     norm_x = _shapiro_safe(x)
@@ -180,6 +188,8 @@ def correlation_impl(
 
     # Package results
     result: Dict[str, Any] = {
+        "schema_version": SCHEMA_VERSION,
+        "test_family": "correlation",
         "chosen_test": "pearson" if chosen == "pearson" else "spearman",
         "test_name": "Pearson correlation" if chosen == "pearson" else "Spearman correlation",
         "stats": {
@@ -205,5 +215,8 @@ def correlation_impl(
 
     if chosen == "pearson":
         result["confidence_interval_95"] = {"lower": ci_lo, "upper": ci_hi, "method": "Fisher z"}
+
+    if missing_report:
+        result["missing_data_report"] = missing_report
 
     return result

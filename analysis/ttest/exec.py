@@ -27,6 +27,7 @@ import matplotlib.pyplot as plt
 
 from analysis.shared.stats_tests import shapiro_by_group, levene_test
 from analysis.shared.effect_sizes import hedges_g, rank_biserial_from_u
+from analysis.shared.schema import SCHEMA_VERSION  
 
 
 # -----------------------------
@@ -110,6 +111,7 @@ def t_test_impl(
     group_a: Optional[str] = None,  # optional filter to exactly two group levels
     group_b: Optional[str] = None,
     nonparametric: bool = False,  # optional override to force Mann–Whitney
+    missing_report: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
     Two-sample comparison with assumption checks and branching.
@@ -117,13 +119,17 @@ def t_test_impl(
 
     # --- 0) Validate metadata/types ---
     if group_col not in metadata:
-        return {"error": f"Column '{group_col}' not found in dataset"}
+        return {"schema_version": SCHEMA_VERSION, "test_family": "t_test",
+                "error": f"Column '{group_col}' not found in dataset"}
     if value_col not in metadata:
-        return {"error": f"Column '{value_col}' not found in dataset"}
+        return {"schema_version": SCHEMA_VERSION, "test_family": "t_test",
+                "error": f"Column '{value_col}' not found in dataset"}
     if metadata[group_col] != "categorical":
-        return {"error": f"'{group_col}' should be categorical, but is {metadata[group_col]}"}
+        return {"schema_version": SCHEMA_VERSION, "test_family": "t_test",
+                "error": f"'{group_col}' should be categorical, but is {metadata[group_col]}"}
     if metadata[value_col] != "numerical":
-        return {"error": f"'{value_col}' should be numerical, but is {metadata[value_col]}"}
+        return {"schema_version": SCHEMA_VERSION, "test_family": "t_test",
+                "error": f"'{value_col}' should be numerical, but is {metadata[value_col]}"}
 
     # --- 1) Pull required columns (no NA handling here; upstream should have cleaned) ---
     data = df[[group_col, value_col]].copy()
@@ -133,6 +139,8 @@ def t_test_impl(
     total_na = int(sum(na_counts.values()))
     if total_na > 0:
         return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "t_test",
             "error": "Missing values detected in required columns after preprocessing step.",
             "details": {
                 "columns_checked": [group_col, value_col],
@@ -146,10 +154,13 @@ def t_test_impl(
 
     if (group_a is not None) or (group_b is not None):
         if not (group_a and group_b):
-            return {"error": "If specifying filters, both 'group_a' and 'group_b' must be provided."}
+            return {"schema_version": SCHEMA_VERSION, "test_family": "t_test",
+                    "error": "If specifying filters, both 'group_a' and 'group_b' must be provided."}
         missing_levels = [g for g in (group_a, group_b) if g not in levels]
         if missing_levels:
             return {
+                "schema_version": SCHEMA_VERSION,
+                "test_family": "t_test",
                 "error": "Requested groups not found in the data.",
                 "requested": [group_a, group_b],
                 "available_levels": levels,
@@ -160,9 +171,13 @@ def t_test_impl(
     levels = pd.Index(data[group_col].unique()).tolist()
 
     if len(levels) < 2:
-        return {"error": "Fewer than two groups available for comparison after filtering.", "available_levels": levels}
+        return {"schema_version": SCHEMA_VERSION, "test_family": "t_test",
+                "error": "Fewer than two groups available for comparison after filtering.",
+                "available_levels": levels}
     if len(levels) > 2:
         return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "t_test",
             "error": f"More than two groups present in '{group_col}'. Please specify exactly two groups.",
             "available_levels": levels,
             "hint": "Call t_test with group_a='LEVEL1', group_b='LEVEL2'.",
@@ -174,7 +189,8 @@ def t_test_impl(
     g2 = data.loc[data[group_col] == g2_name, value_col].astype(float).to_numpy()
 
     if g1.size < 2 or g2.size < 2:
-        return {"error": "Each group needs at least 2 observations for the test.",
+        return {"schema_version": SCHEMA_VERSION, "test_family": "t_test",
+                "error": "Each group needs at least 2 observations for the test.",
                 "sizes": {g1_name: int(g1.size), g2_name: int(g2.size)}}
 
     # Group summaries
@@ -202,7 +218,9 @@ def t_test_impl(
             rrb = rank_biserial_from_u(u, g1.size, g2.size)
             title = f"Mann–Whitney U: {g1_name} vs {g2_name}"
             plot_path = _violin_plot_to_tempfile(g1, g2, [g1_name, g2_name], ylabel=value_col, title=title)
-            return {
+            result = {
+                "schema_version": SCHEMA_VERSION,
+                "test_family": "t_test",
                 "chosen_test": "mann_whitney",
                 "test_name": "Mann–Whitney U",
                 "stats": {"U": u, "p_value": p, "method": method_used},
@@ -215,8 +233,13 @@ def t_test_impl(
                 "warnings": warnings,
                 "plot_path": plot_path,
             }
+            if missing_report:
+                result["missing_data_report"] = missing_report  # attach
+            return result
         except Exception as e:
             return {
+                "schema_version": SCHEMA_VERSION,
+                "test_family": "t_test",
                 "error": "Mann–Whitney U failed",
                 "details": str(e),
                 "assumptions": {"normality": {"forced_nonparametric": True}},
@@ -245,7 +268,9 @@ def t_test_impl(
             rrb = rank_biserial_from_u(u, g1.size, g2.size)
             title = f"Mann–Whitney U: {g1_name} vs {g2_name}"
             plot_path = _violin_plot_to_tempfile(g1, g2, [g1_name, g2_name], ylabel=value_col, title=title)
-            return {
+            result = {
+                "schema_version": SCHEMA_VERSION,
+                "test_family": "t_test",
                 "chosen_test": "mann_whitney",
                 "test_name": "Mann–Whitney U",
                 "stats": {"U": u, "p_value": p, "method": method_used},
@@ -258,8 +283,13 @@ def t_test_impl(
                 "warnings": warnings,
                 "plot_path": plot_path,
             }
+            if missing_report:
+                result["missing_data_report"] = missing_report
+            return result
         except Exception as e:
             return {
+                "schema_version": SCHEMA_VERSION,
+                "test_family": "t_test",
                 "error": "Mann–Whitney U failed",
                 "details": str(e),
                 "assumptions": {"normality": normality},
@@ -286,7 +316,12 @@ def t_test_impl(
     try:
         t_stat, p_value = stats.ttest_ind(g1, g2, equal_var=use_equal_var)
     except Exception as e:
-        return {"error": f"t-test failed: {e.__class__.__name__}", "assumptions": {"normality": normality, "variance": lev}}
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "t_test",
+            "error": f"t-test failed: {e.__class__.__name__}",
+            "assumptions": {"normality": normality, "variance": lev},
+        }
 
     # Effect size: Hedges' g
     g_eff = hedges_g(g1, g2)
@@ -298,6 +333,8 @@ def t_test_impl(
 
     chosen = "student_t" if use_equal_var else "welch_t"
     result = {
+        "schema_version": SCHEMA_VERSION,
+        "test_family": "t_test",
         "chosen_test": chosen,
         "test_name": label,
         "stats": {"t": float(t_stat), "p_value": float(p_value)},
@@ -307,4 +344,7 @@ def t_test_impl(
         "warnings": warnings,
         "plot_path": plot_path,
     }
+    if missing_report:
+        result["missing_data_report"] = missing_report
+
     return result

@@ -16,6 +16,7 @@ from analysis.anova.exec import anova_impl
 from analysis.correlation.exec import correlation_impl
 from analysis.chisquared.exec import chi_square_impl
 from analysis.recommend.exec import recommend_tests_impl
+from analysis.clustering.exec import clustering_impl
 
 
 # Registry mapping tool names to their implementations
@@ -24,7 +25,8 @@ STATE_AWARE_IMPLS: Dict[str, Callable[..., Dict[str, Any]]] = {
     "anova_test": anova_impl,
     "correlation_test": correlation_impl,
     "chi_square_test": chi_square_impl,
-    "recommend_tests": recommend_tests_impl
+    "recommend_tests": recommend_tests_impl,
+    "clustering_kmeans": clustering_impl
 }
 
 
@@ -70,12 +72,13 @@ def execute_tools_node(state: AgentState) -> AgentState:
                 result = STATE_AWARE_IMPLS[name](
                     df=df_use,
                     metadata=state["metadata"],
+                    missing_report=missing_report,   # <-- pass through
                     **args,
                 )
 
-                # Attach missing-data transparency if available
-                if isinstance(result, dict) and missing_report is not None:
-                    result.setdefault("missing_data", missing_report)
+                # Attach missing-data transparency if available and not already included by impl
+                if isinstance(result, dict) and missing_report is not None and "missing_data_report" not in result:
+                    result["missing_data_report"] = missing_report
 
             except Exception as e:
                 result = {
@@ -94,4 +97,5 @@ def execute_tools_node(state: AgentState) -> AgentState:
 
     # Return updated state with tool results
     # The add_messages reducer will append these to the conversation
+    print(f"tools_exec return: {tool_msgs}")
     return {"messages": tool_msgs}
