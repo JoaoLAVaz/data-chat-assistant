@@ -27,7 +27,8 @@ import matplotlib.pyplot as plt
 
 from analysis.shared.stats_tests import shapiro_by_group, levene_test
 from analysis.shared.effect_sizes import hedges_g, rank_biserial_from_u
-from analysis.shared.schema import SCHEMA_VERSION  
+from analysis.shared.schema import SCHEMA_VERSION
+from analysis.shared.coercion import coerce_numeric_to_categorical_if_safe
 
 
 # -----------------------------
@@ -117,19 +118,46 @@ def t_test_impl(
     Two-sample comparison with assumption checks and branching.
     """
 
+    # Track any numeric→categorical coercions we decide to apply for this analysis
+    coercions: Dict[str, Any] = {}
+
     # --- 0) Validate metadata/types ---
     if group_col not in metadata:
-        return {"schema_version": SCHEMA_VERSION, "test_family": "t_test",
-                "error": f"Column '{group_col}' not found in dataset"}
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "t_test",
+            "error": f"Column '{group_col}' not found in dataset",
+        }
     if value_col not in metadata:
-        return {"schema_version": SCHEMA_VERSION, "test_family": "t_test",
-                "error": f"Column '{value_col}' not found in dataset"}
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "t_test",
+            "error": f"Column '{value_col}' not found in dataset",
+        }
+
+    # group_col is expected categorical; allow safe numeric→categorical coercion
     if metadata[group_col] != "categorical":
-        return {"schema_version": SCHEMA_VERSION, "test_family": "t_test",
-                "error": f"'{group_col}' should be categorical, but is {metadata[group_col]}"}
+        maybe = coerce_numeric_to_categorical_if_safe(
+            df=df,
+            metadata=metadata,
+            col=group_col,
+            role="group_col",
+        )
+        if maybe is None:
+            return {
+                "schema_version": SCHEMA_VERSION,
+                "test_family": "t_test",
+                "error": f"'{group_col}' should be categorical, but is {metadata[group_col]}",
+            }
+        else:
+            coercions[group_col] = maybe
+
     if metadata[value_col] != "numerical":
-        return {"schema_version": SCHEMA_VERSION, "test_family": "t_test",
-                "error": f"'{value_col}' should be numerical, but is {metadata[value_col]}"}
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "t_test",
+            "error": f"'{value_col}' should be numerical, but is {metadata[value_col]}",
+        }
 
     # --- 1) Pull required columns (no NA handling here; upstream should have cleaned) ---
     data = df[[group_col, value_col]].copy()
@@ -154,8 +182,11 @@ def t_test_impl(
 
     if (group_a is not None) or (group_b is not None):
         if not (group_a and group_b):
-            return {"schema_version": SCHEMA_VERSION, "test_family": "t_test",
-                    "error": "If specifying filters, both 'group_a' and 'group_b' must be provided."}
+            return {
+                "schema_version": SCHEMA_VERSION,
+                "test_family": "t_test",
+                "error": "If specifying filters, both 'group_a' and 'group_b' must be provided.",
+            }
         missing_levels = [g for g in (group_a, group_b) if g not in levels]
         if missing_levels:
             return {
@@ -171,9 +202,12 @@ def t_test_impl(
     levels = pd.Index(data[group_col].unique()).tolist()
 
     if len(levels) < 2:
-        return {"schema_version": SCHEMA_VERSION, "test_family": "t_test",
-                "error": "Fewer than two groups available for comparison after filtering.",
-                "available_levels": levels}
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "t_test",
+            "error": "Fewer than two groups available for comparison after filtering.",
+            "available_levels": levels,
+        }
     if len(levels) > 2:
         return {
             "schema_version": SCHEMA_VERSION,
@@ -189,9 +223,12 @@ def t_test_impl(
     g2 = data.loc[data[group_col] == g2_name, value_col].astype(float).to_numpy()
 
     if g1.size < 2 or g2.size < 2:
-        return {"schema_version": SCHEMA_VERSION, "test_family": "t_test",
-                "error": "Each group needs at least 2 observations for the test.",
-                "sizes": {g1_name: int(g1.size), g2_name: int(g2.size)}}
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "t_test",
+            "error": "Each group needs at least 2 observations for the test.",
+            "sizes": {g1_name: int(g1.size), g2_name: int(g2.size)},
+        }
 
     # Group summaries
     def _summary(arr: np.ndarray) -> Dict[str, float]:
@@ -234,7 +271,10 @@ def t_test_impl(
                 "plot_path": plot_path,
             }
             if missing_report:
-                result["missing_data_report"] = missing_report  # attach
+                result["missing_data_report"] = missing_report
+            if coercions:
+                result.setdefault("preprocessing", {})
+                result["preprocessing"]["numeric_to_categorical"] = coercions
             return result
         except Exception as e:
             return {
@@ -285,6 +325,9 @@ def t_test_impl(
             }
             if missing_report:
                 result["missing_data_report"] = missing_report
+            if coercions:
+                result.setdefault("preprocessing", {})
+                result["preprocessing"]["numeric_to_categorical"] = coercions
             return result
         except Exception as e:
             return {
@@ -346,5 +389,8 @@ def t_test_impl(
     }
     if missing_report:
         result["missing_data_report"] = missing_report
+    if coercions:
+        result.setdefault("preprocessing", {})
+        result["preprocessing"]["numeric_to_categorical"] = coercions
 
     return result

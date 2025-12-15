@@ -26,7 +26,8 @@ matplotlib.use("Agg")  # headless
 import matplotlib.pyplot as plt
 
 from analysis.shared.stats_tests import shapiro_by_group, levene_test
-from analysis.shared.schema import SCHEMA_VERSION  
+from analysis.shared.schema import SCHEMA_VERSION
+from analysis.shared.coercion import coerce_numeric_to_categorical_if_safe
 
 
 # -----------------------------
@@ -158,19 +159,46 @@ def anova_impl(
     """
     One-way comparison across 3+ groups with assumption checks and branching.
     """
+    # Track any numeric→categorical coercions applied for this analysis
+    coercions: Dict[str, Any] = {}
+
     # --- Validate types ---
     if group_col not in metadata:
-        return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
-                "error": f"Column '{group_col}' not found in dataset"}
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "anova",
+            "error": f"Column '{group_col}' not found in dataset",
+        }
     if value_col not in metadata:
-        return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
-                "error": f"Column '{value_col}' not found in dataset"}
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "anova",
+            "error": f"Column '{value_col}' not found in dataset",
+        }
+
+    # group_col is expected categorical; allow safe numeric→categorical coercion
     if metadata[group_col] != "categorical":
-        return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
-                "error": f"'{group_col}' should be categorical, but is {metadata[group_col]}"}
+        maybe = coerce_numeric_to_categorical_if_safe(
+            df=df,
+            metadata=metadata,
+            col=group_col,
+            role="group_col",
+        )
+        if maybe is None:
+            return {
+                "schema_version": SCHEMA_VERSION,
+                "test_family": "anova",
+                "error": f"'{group_col}' should be categorical, but is {metadata[group_col]}",
+            }
+        else:
+            coercions[group_col] = maybe
+
     if metadata[value_col] != "numerical":
-        return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
-                "error": f"'{value_col}' should be numerical, but is {metadata[value_col]}"}
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "anova",
+            "error": f"'{value_col}' should be numerical, but is {metadata[value_col]}",
+        }
 
     # Required data (assume upstream missing-data handled)
     data = df[[group_col, value_col]].copy()
@@ -186,8 +214,11 @@ def anova_impl(
     # Group arrays
     levels = list(pd.Index(data[group_col].unique()))
     if len(levels) < 3:
-        return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
-                "error": f"ANOVA expects 3+ groups; found {len(levels)}: {levels}"}
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "anova",
+            "error": f"ANOVA expects 3+ groups; found {len(levels)}: {levels}",
+        }
 
     # Build arrays in deterministic order
     levels = sorted(levels)
@@ -196,9 +227,12 @@ def anova_impl(
     # Check minimal sizes
     too_small = [lvl for lvl, arr in zip(levels, groups) if arr.size < 2]
     if too_small:
-        return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
-                "error": "Each group needs at least 2 observations.",
-                "too_small_groups": too_small}
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "anova",
+            "error": "Each group needs at least 2 observations.",
+            "too_small_groups": too_small,
+        }
 
     # Group summaries block
     def _summary(arr: np.ndarray) -> Dict[str, float]:
@@ -229,17 +263,26 @@ def anova_impl(
                 "stats": {"H": float(H), "p_value": float(p), "df": len(groups) - 1},
                 "effect_size": {"name": "epsilon_squared", "value": eps2},
                 "groups": groups_block,
-                "assumptions": {"normality": {"forced_nonparametric": True},
-                                "variance": {"note": "Not applicable for Kruskal–Wallis."}},
+                "assumptions": {
+                    "normality": {"forced_nonparametric": True},
+                    "variance": {"note": "Not applicable for Kruskal–Wallis."},
+                },
                 "warnings": warnings,
                 "plot_path": plot_path,
             }
             if missing_report:
-                result["missing_data_report"] = missing_report  
+                result["missing_data_report"] = missing_report
+            if coercions:
+                result.setdefault("preprocessing", {})
+                result["preprocessing"]["numeric_to_categorical"] = coercions
             return result
         except Exception as e:
-            return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
-                    "error": f"Kruskal–Wallis failed: {e.__class__.__name__}", "details": str(e)}
+            return {
+                "schema_version": SCHEMA_VERSION,
+                "test_family": "anova",
+                "error": f"Kruskal–Wallis failed: {e.__class__.__name__}",
+                "details": str(e),
+            }
 
     # Normality per group
     stacked = pd.DataFrame({group_col: np.repeat(levels, [len(g) for g in groups]),
@@ -265,18 +308,27 @@ def anova_impl(
                 "stats": {"H": float(H), "p_value": float(p), "df": len(groups) - 1},
                 "effect_size": {"name": "epsilon_squared", "value": eps2},
                 "groups": groups_block,
-                "assumptions": {"normality": normality,
-                                "variance": {"note": "Not applicable for Kruskal–Wallis."}},
+                "assumptions": {
+                    "normality": normality,
+                    "variance": {"note": "Not applicable for Kruskal–Wallis."},
+                },
                 "warnings": warnings,
                 "plot_path": plot_path,
             }
             if missing_report:
-                result["missing_data_report"] = missing_report  
+                result["missing_data_report"] = missing_report
+            if coercions:
+                result.setdefault("preprocessing", {})
+                result["preprocessing"]["numeric_to_categorical"] = coercions
             return result
         except Exception as e:
-            return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
-                    "error": f"Kruskal–Wallis failed: {e.__class__.__name__}",
-                    "details": str(e), "assumptions": {"normality": normality}}
+            return {
+                "schema_version": SCHEMA_VERSION,
+                "test_family": "anova",
+                "error": f"Kruskal–Wallis failed: {e.__class__.__name__}",
+                "details": str(e),
+                "assumptions": {"normality": normality},
+            }
 
     # Variance homogeneity: Levene/Brown–Forsythe
     lev = levene_test(stacked, group_col, value_col, center="median")
@@ -294,9 +346,12 @@ def anova_impl(
         try:
             F, p = stats.f_oneway(*groups)
         except Exception as e:
-            return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
-                    "error": f"ANOVA failed: {e.__class__.__name__}",
-                    "assumptions": {"normality": normality, "variance": lev}}
+            return {
+                "schema_version": SCHEMA_VERSION,
+                "test_family": "anova",
+                "error": f"ANOVA failed: {e.__class__.__name__}",
+                "assumptions": {"normality": normality, "variance": lev},
+            }
 
         # Effect sizes
         eff = _anova_effect_sizes(groups)
@@ -308,27 +363,39 @@ def anova_impl(
             "test_family": "anova",
             "chosen_test": "anova",
             "test_name": "One-way ANOVA",
-            "stats": {"F": float(F), "p_value": float(p), "df1": len(groups) - 1,
-                      "df2": int(sum(len(g) for g in groups) - len(groups))},
-            "effect_size": {"name": "eta_squared/omega_squared",
-                            "eta_squared": eff["eta_squared"],
-                            "omega_squared": eff["omega_squared"]},
+            "stats": {
+                "F": float(F),
+                "p_value": float(p),
+                "df1": len(groups) - 1,
+                "df2": int(sum(len(g) for g in groups) - len(groups)),
+            },
+            "effect_size": {
+                "name": "eta_squared/omega_squared",
+                "eta_squared": eff["eta_squared"],
+                "omega_squared": eff["omega_squared"],
+            },
             "groups": groups_block,
             "assumptions": {"normality": normality, "variance": lev},
             "warnings": warnings,
             "plot_path": plot_path,
         }
         if missing_report:
-            result["missing_data_report"] = missing_report  
+            result["missing_data_report"] = missing_report
+        if coercions:
+            result.setdefault("preprocessing", {})
+            result["preprocessing"]["numeric_to_categorical"] = coercions
         return result
     else:
         # Welch's ANOVA
         try:
             F, p, df1, df2 = _welch_anova(groups)
         except Exception as e:
-            return {"schema_version": SCHEMA_VERSION, "test_family": "anova",
-                    "error": f"Welch's ANOVA failed: {e.__class__.__name__}",
-                    "assumptions": {"normality": normality, "variance": lev}}
+            return {
+                "schema_version": SCHEMA_VERSION,
+                "test_family": "anova",
+                "error": f"Welch's ANOVA failed: {e.__class__.__name__}",
+                "assumptions": {"normality": normality, "variance": lev},
+            }
 
         # Approximate eta^2 using between/total from group means (not exact under Welch)
         eff = _anova_effect_sizes(groups)
@@ -341,13 +408,19 @@ def anova_impl(
             "chosen_test": "welch_anova",
             "test_name": "Welch's ANOVA",
             "stats": {"F": float(F), "p_value": float(p), "df1": float(df1), "df2": float(df2)},
-            "effect_size": {"name": "eta_squared", "eta_squared": eff["eta_squared"],
-                            "note": "Approximate under Welch."},
+            "effect_size": {
+                "name": "eta_squared",
+                "eta_squared": eff["eta_squared"],
+                "note": "Approximate under Welch.",
+            },
             "groups": groups_block,
             "assumptions": {"normality": normality, "variance": lev},
             "warnings": warnings,
             "plot_path": plot_path,
         }
         if missing_report:
-            result["missing_data_report"] = missing_report  
+            result["missing_data_report"] = missing_report
+        if coercions:
+            result.setdefault("preprocessing", {})
+            result["preprocessing"]["numeric_to_categorical"] = coercions
         return result

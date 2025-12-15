@@ -25,7 +25,8 @@ import matplotlib
 matplotlib.use("Agg")  # headless
 import matplotlib.pyplot as plt
 
-from analysis.shared.schema import SCHEMA_VERSION  
+from analysis.shared.schema import SCHEMA_VERSION
+from analysis.shared.coercion import coerce_numeric_to_categorical_if_safe
 
 
 # -----------------------------
@@ -99,14 +100,32 @@ def chi_square_impl(
     Association test between two categorical variables.
     Chooses Fisher exact (2x2, expected < 5) or Chi-square accordingly.
     """
-    # Validate inputs
-    for v in (var1, var2):
+    # Track any numeric→categorical coercions applied
+    coercions: Dict[str, Any] = {}
+
+    # Validate inputs (+ allow safe coercion)
+    for v, role in ((var1, "var1"), (var2, "var2")):
         if v not in metadata:
-            return {"schema_version": SCHEMA_VERSION, "test_family": "chi_square",
-                    "error": f"Column '{v}' not found in dataset"}
+            return {
+                "schema_version": SCHEMA_VERSION,
+                "test_family": "chi_square",
+                "error": f"Column '{v}' not found in dataset",
+            }
         if metadata[v] != "categorical":
-            return {"schema_version": SCHEMA_VERSION, "test_family": "chi_square",
-                    "error": f"'{v}' must be categorical, but is {metadata[v]}"}
+            maybe = coerce_numeric_to_categorical_if_safe(
+                df=df,
+                metadata=metadata,
+                col=v,
+                role=role,
+            )
+            if maybe is None:
+                return {
+                    "schema_version": SCHEMA_VERSION,
+                    "test_family": "chi_square",
+                    "error": f"'{v}' must be categorical, but is {metadata[v]}",
+                }
+            else:
+                coercions[v] = maybe
 
     # Required data (assume upstream missing-data handled)
     data = df[[var1, var2]].copy()
@@ -122,16 +141,23 @@ def chi_square_impl(
     # Contingency table (rows=var1 levels, cols=var2 levels)
     ct = pd.crosstab(data[var1], data[var2])
     if ct.empty or ct.values.sum() == 0:
-        return {"schema_version": SCHEMA_VERSION, "test_family": "chi_square",
-                "error": "Unable to form a valid contingency table (no counts)."}
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "chi_square",
+            "error": "Unable to form a valid contingency table (no counts).",
+        }
 
     # Expected counts via chi2_contingency (no correction here; we just want expected)
     try:
         chi2_tmp, p_tmp, dof_tmp, expected = stats.chi2_contingency(ct.values, correction=False)
         expected = np.asarray(expected, dtype=float)
     except Exception as e:
-        return {"schema_version": SCHEMA_VERSION, "test_family": "chi_square",
-                "error": f"Failed to compute expected counts: {e.__class__.__name__}", "details": str(e)}
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "chi_square",
+            "error": f"Failed to compute expected counts: {e.__class__.__name__}",
+            "details": str(e),
+        }
 
     min_expected = float(expected.min()) if expected.size else None
     r, c = ct.shape
@@ -183,10 +209,17 @@ def chi_square_impl(
             }
             if missing_report:
                 result["missing_data_report"] = missing_report
+            if coercions:
+                result.setdefault("preprocessing", {})
+                result["preprocessing"]["numeric_to_categorical"] = coercions
             return result
         except Exception as e:
-            return {"schema_version": SCHEMA_VERSION, "test_family": "chi_square",
-                    "error": f"Fisher exact failed: {e.__class__.__name__}", "details": str(e)}
+            return {
+                "schema_version": SCHEMA_VERSION,
+                "test_family": "chi_square",
+                "error": f"Fisher exact failed: {e.__class__.__name__}",
+                "details": str(e),
+            }
 
     # Else Chi-square
     try:
@@ -226,7 +259,14 @@ def chi_square_impl(
             )
         if missing_report:
             result["missing_data_report"] = missing_report
+        if coercions:
+            result.setdefault("preprocessing", {})
+            result["preprocessing"]["numeric_to_categorical"] = coercions
         return result
     except Exception as e:
-        return {"schema_version": SCHEMA_VERSION, "test_family": "chi_square",
-                "error": f"Chi-square failed: {e.__class__.__name__}", "details": str(e)}
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "test_family": "chi_square",
+            "error": f"Chi-square failed: {e.__class__.__name__}",
+            "details": str(e),
+        }
