@@ -134,7 +134,7 @@ Key properties:
 The first fine-tuned model performed **worse than the base model** under blind evaluation.
 
 | Metric | GPT‑4.1 | Qwen‑3‑4B | Qwen‑3‑4B |
-|------|--------|-----------|
+|------|--------|-----------|-----------|
 | Overall | **4.67** | **4.31** | **4.18** |
 
 We can see a clearly worst result than base Qwen and it also hallucinated more often.
