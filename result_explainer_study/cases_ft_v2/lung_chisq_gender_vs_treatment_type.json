@@ -1,0 +1,144 @@
+{
+  "meta": {
+    "id": "lung_chisq_gender_vs_treatment_type",
+    "dataset_name": "lung_cancer_missingvals",
+    "test_family": "chi_square",
+    "planned_test": "chi_square",
+    "chosen_test": "chi_square",
+    "value_col": null,
+    "group_col": null
+  },
+  "tool_json": {
+    "schema_version": "1.0",
+    "test_family": "chi_square",
+    "chosen_test": "chi_square",
+    "test_name": "Chi-square Test of Independence",
+    "stats": {
+      "chi2": 27.596041385515072,
+      "p_value": 4.365088019622614e-05,
+      "df": 5,
+      "table_shape": [
+        2,
+        6
+      ],
+      "min_expected": 3.5,
+      "yates_correction": false
+    },
+    "effect_size": {
+      "name": "Cramér's V",
+      "value": 0.49200664474113603
+    },
+    "contingency_table": {
+      "Chemoradiation": {
+        "F": 13,
+        "M": 5
+      },
+      "Multimodal": {
+        "F": 15,
+        "M": 3
+      },
+      "Palliative": {
+        "F": 0,
+        "M": 7
+      },
+      "Surgery": {
+        "F": 6,
+        "M": 13
+      },
+      "Surgery + Adjuvant": {
+        "F": 2,
+        "M": 11
+      },
+      "Systemic": {
+        "F": 21,
+        "M": 18
+      }
+    },
+    "assumptions": {
+      "expected_frequencies": {
+        "min": 3.5,
+        "rule_of_5_triggered": true,
+        "alpha": 0.05
+      }
+    },
+    "warnings": [
+      "Some expected counts < 5 in a table larger than 2×2; chi-square used (Fisher not available for >2×2). Interpret with caution."
+    ],
+    "plot_path": "C:\\Users\\PC\\AppData\\Local\\Temp\\chisq_28jf9c8g.png",
+    "missing_data_report": {
+      "columns": [
+        "gender",
+        "treatment_type"
+      ],
+      "rows_before": 114,
+      "total_missing": 0,
+      "missing_by_column": {
+        "gender": 0,
+        "treatment_type": 0
+      },
+      "missing_rate": 0.0,
+      "policy": "none",
+      "alpha": 0.05,
+      "scope": "hybrid",
+      "mcar": {
+        "available": false,
+        "stat": null,
+        "df": null,
+        "p": null,
+        "note": null,
+        "numeric_cols_used": []
+      },
+      "mcar_proxy": {
+        "available": false,
+        "method": null,
+        "p": null,
+        "note": null
+      },
+      "imputations": {},
+      "warning": null,
+      "config": {
+        "impute_threshold": 0.2,
+        "extreme_threshold": 0.5,
+        "force_impute": false,
+        "max_cat_cardinality": 50,
+        "max_pred_missing": 0.5
+      },
+      "predictors": {
+        "selected": [],
+        "dropped": [],
+        "encoded_features": 0
+      },
+      "imputer_details": {},
+      "rows_after": 114,
+      "rows_dropped": 0
+    },
+    "_execution_context": {
+      "df_scope": "scoped"
+    }
+  },
+  "models": {
+    "gpt4": {
+      "text": "1. **Missing Data Analysis**: The dataset contained no missing values across the variables of interest, specifically gender and treatment type, with a total of 114 observations. This absence of missingness allows for a complete analysis without the need for imputation, ensuring that the results are based on the full dataset. Given the absence of missing data, there are no caveats related to imputation or missingness that could affect the analysis.\n\n2. **Pre-Test Diagnostics**: The analysis involved a contingency table with two groups (gender) across six treatment types. The minimum expected frequency in any cell of the table was 3.5, which is above the conventional threshold of 5. However, it is noted that some expected counts were below 5, which can affect the reliability of the chi-square test. Despite this, the chi-square test was deemed appropriate due to the nature of the data and the size of the table.\n\n3. **Test Selection Rationale**: A Chi-square Test of Independence was selected to evaluate the relationship between two categorical variables: gender and treatment type. This test is suitable for assessing whether distributions of categorical variables differ from one another, particularly in a contingency table format. Given the data structure, this test allows for the examination of associations without assuming normality.\n\n4. **Test Results**: The chi-square statistic calculated was approximately 27.60, with a p-value of 0.0000437, indicating a statistically significant association between gender and treatment type at the alpha level of 0.05. The degrees of freedom for this test were 5. Additionally, Cramér's V, a measure of effect size, was calculated at 0.49, suggesting a moderate to strong association between the variables.\n\n5. **Interpretation**: The findings indicate a significant relationship between gender and the type of treatment received, suggesting that treatment type distribution varies by gender. Practically, this could imply that certain treatments may be preferred or more accessible to one gender over another, warranting further investigation into the underlying factors influencing these choices. Statistically, the significant p-value and moderate effect size suggest that the relationship is not only statistically significant but also meaningful in a practical context, meriting attention in clinical or policy discussions.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_tokens": 600
+      }
+    },
+    "qwen3_4b": {
+      "text": "### Missing Data Analysis  \nNo missing values were found in either *gender* or *treatment_type* columns. All 114 observations are complete, with 0 missing entries. No imputation was required, and the data is fully observed.\n\n### Pre-Test Diagnostics  \nThe analysis involves a 2×6 contingency table (2 gender groups: F/M; 6 treatment types). Group sizes are balanced, with 13–21 females and 5–18 males across treatment types. The minimum expected frequency is 3.5, but some expected counts fall below 5 (e.g., 0 expected in \"Palliative-F\"), triggering a warning.\n\n### Test Selection Rationale  \nA Chi-square Test of Independence was selected due to the categorical nature of both variables. The test family is appropriate for assessing independence between gender and treatment type. Fisher’s exact test was not used because the table exceeds 2×2 size, and the rule of 5 (minimum expected count ≥5) is violated in several cells.\n\n### Test Results  \n- **Chi-square statistic**: 27.60  \n- **Degrees of freedom**: 5  \n- **p-value**: ~0.000044 (highly significant)  \n- **Cramér’s V (effect size)**: 0.49 (moderate to strong association)\n\n### Interpretation  \nThe result shows a statistically significant association between gender and treatment type (p < 0.001). Cramér’s V of 0.49 suggests a meaningful relationship—females are more likely to receive certain treatments (e.g., systemic therapy) than males, and males are more likely to receive surgery or multimodal therapy.  \n\n**Caveat**: Due to low expected counts (e.g., 0 in \"Palliative-F\"), results should be interpreted with caution. The chi-square test assumes independence and expected frequencies ≥5, which is partially violated. Consider using exact tests or data aggregation if precision is critical.  \n\n*Visualization available at: C:\\Users\\PC\\AppData\\Local\\Temp\\chisq_28jf9c8g.png*",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    },
+    "qwen3_4b_ft_v2": {
+      "text": "### Chi-Square Test of Independence – Analysis Summary\n\n**1. Missing Data Analysis**  \nNo missing values were detected in either *gender* or *treatment_type* (total missing = 0). All 114 observations are complete, with no data imputation required. The data is fully observed and suitable for analysis.\n\n**2. Pre-Test Diagnostics**  \nThe contingency table has 2 rows (gender: F/M) and 6 columns (treatment types). The test uses a chi-square statistic with 5 degrees of freedom. Minimum expected frequency is 3.5, but some expected counts fall below 5 (e.g., 0 in \"Palliative–F\"), triggering a warning.\n\n**3. Test Selection Rationale**  \nA chi-square test of independence is appropriate for assessing associations between two categorical variables: gender and treatment type. Fisher’s exact test is not used due to the table size (>2×2), and the chi-square test is valid under the assumption of independence and sufficient expected frequencies.\n\n**4. Test Results**  \n- **Chi-square statistic**: 27.60  \n- **p-value**: < 0.0001 (highly significant)  \n- **Degrees of freedom**: 5  \n- **Cramér’s V (effect size)**: 0.49 (moderate to strong association)\n\n**5. Interpretation**  \nThere is a statistically significant association between gender and treatment type (p < 0.0001). The effect size (Cramér’s V = 0.49) suggests a meaningful association, indicating that gender influences treatment selection. However, due to low expected counts (e.g., 0 in \"Palliative–F\"), results should be interpreted with caution.\n\n*Note: A visual plot of the contingency table is available at the provided path.*",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    }
+  },
+  "eval": {},
+  "_file_path": "cases\\lung_chisq_gender_vs_treatment_type.json"
+}

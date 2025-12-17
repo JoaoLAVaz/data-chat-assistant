@@ -1,0 +1,148 @@
+{
+  "meta": {
+    "id": "lung_ttest_overall_survival_vs_gender",
+    "dataset_name": "lung_cancer_missingvals",
+    "test_family": "t_test",
+    "planned_test": "t_test",
+    "chosen_test": "mann_whitney",
+    "value_col": "overall_survival_months",
+    "group_col": "gender"
+  },
+  "tool_json": {
+    "schema_version": "1.0",
+    "test_family": "t_test",
+    "chosen_test": "mann_whitney",
+    "test_name": "Mann–Whitney U",
+    "stats": {
+      "U": 2277.0,
+      "p_value": 0.00021978319480420804,
+      "method": "auto"
+    },
+    "effect_size": {
+      "name": "rank_biserial",
+      "value": -0.4016620498614958,
+      "note": null
+    },
+    "groups": {
+      "group1": {
+        "name": "F",
+        "n": 57,
+        "mean": 20.54385964912281,
+        "sd": 3.35963526633577,
+        "median": 20.7,
+        "iqr": 4.400000000000002
+      },
+      "group2": {
+        "name": "M",
+        "n": 57,
+        "mean": 16.196491228070176,
+        "sd": 6.257366085328118,
+        "median": 15.4,
+        "iqr": 11.400000000000002
+      }
+    },
+    "assumptions": {
+      "normality": {
+        "per_group": {
+          "F": {
+            "n": 57,
+            "stat": 0.9386776012312592,
+            "p": 0.006221594630141257,
+            "ok": false,
+            "note": null
+          },
+          "M": {
+            "n": 57,
+            "stat": 0.9327025200284405,
+            "p": 0.0034760031370974264,
+            "ok": false,
+            "note": null
+          }
+        },
+        "any_non_normal": true,
+        "tested_groups": 2,
+        "notes": []
+      },
+      "variance": {
+        "note": "Not applicable for Mann–Whitney."
+      }
+    },
+    "warnings": [],
+    "plot_path": "C:\\Users\\PC\\AppData\\Local\\Temp\\ttest_cxyb3yjc.png",
+    "missing_data_report": {
+      "columns": [
+        "gender",
+        "overall_survival_months"
+      ],
+      "rows_before": 114,
+      "total_missing": 0,
+      "missing_by_column": {
+        "gender": 0,
+        "overall_survival_months": 0
+      },
+      "missing_rate": 0.0,
+      "policy": "none",
+      "alpha": 0.05,
+      "scope": "hybrid",
+      "mcar": {
+        "available": false,
+        "stat": null,
+        "df": null,
+        "p": null,
+        "note": null,
+        "numeric_cols_used": []
+      },
+      "mcar_proxy": {
+        "available": false,
+        "method": null,
+        "p": null,
+        "note": null
+      },
+      "imputations": {},
+      "warning": null,
+      "config": {
+        "impute_threshold": 0.2,
+        "extreme_threshold": 0.5,
+        "force_impute": false,
+        "max_cat_cardinality": 50,
+        "max_pred_missing": 0.5
+      },
+      "predictors": {
+        "selected": [],
+        "dropped": [],
+        "encoded_features": 0
+      },
+      "imputer_details": {},
+      "rows_after": 114,
+      "rows_dropped": 0
+    },
+    "_execution_context": {
+      "df_scope": "scoped"
+    }
+  },
+  "models": {
+    "gpt4": {
+      "text": "1. **Missing Data Analysis**: The dataset contained no missing values across the variables of interest, specifically gender and overall survival months, with a total of 114 observations. This absence of missingness suggests that the data is complete and reliable for analysis, eliminating the need for imputation methods. The analysis was conducted under a hybrid scope, ensuring that all relevant data points were utilized without any loss.\n\n2. **Pre-Test Diagnostics**: The analysis involved two groups, labeled F and M, each consisting of 57 participants. The normality tests indicated that neither group met the assumption of normality, with both groups showing significant p-values (F: p = 0.006, M: p = 0.003). This non-normal distribution suggests that parametric tests would not be appropriate. Additionally, variance homogeneity checks are not applicable for the chosen test.\n\n3. **Test Selection Rationale**: Given the violation of normality assumptions in both groups, the Mann–Whitney U test was selected. This non-parametric test is suitable for comparing two independent groups when the data does not follow a normal distribution, making it a robust choice for this analysis.\n\n4. **Test Results**: The Mann–Whitney U statistic was calculated to be 2277. The corresponding p-value was approximately 0.00022, indicating a statistically significant difference between the two groups at the alpha level of 0.05. The effect size, measured using the rank biserial method, was found to be approximately -0.40, suggesting a moderate effect.\n\n5. **Interpretation**: The findings indicate a significant difference in the distributions of the two groups, with group F (mean = 20.54) scoring higher than group M (mean = 16.20). The negative effect size suggests that the difference is substantial enough to be considered meaningful in a practical context. This result implies that the variable being measured may be influenced by the grouping factor, warranting further investigation into the underlying causes of this disparity.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_tokens": 600
+      }
+    },
+    "qwen3_4b": {
+      "text": "### Missing Data Analysis  \nNo missing values were found in either *gender* or *overall survival months* (total missing: 0). All 114 observations are complete, with no need for imputation or data exclusion.\n\n### Pre-Test Diagnostics  \nBoth groups (\"F\" and \"M\") have 57 participants each. Normality tests (Shapiro-Wilk) indicate non-normal distributions:  \n- Group F: p = 0.006 → significant deviation from normality  \n- Group M: p = 0.003 → also non-normal  \nSince both groups violate normality assumptions, a parametric t-test is not appropriate.\n\n### Test Selection Rationale  \nThe Mann–Whitney U test (a non-parametric alternative) was automatically selected due to violations of normality. It does not assume normal distributions or equal variances and is suitable for comparing two independent groups with ordinal or continuous data.\n\n### Test Results  \n- **U statistic**: 2277.0  \n- **p-value**: 0.00022 → highly significant (α = 0.05)  \n- **Effect size (rank-biserial)**: –0.40  \n  → Indicates a moderate to large difference in median survival between groups.\n\n### Interpretation  \nFemales (F) have significantly longer median survival (20.7 months) than males (15.4 months), with a strong effect size (r = –0.40). The difference is statistically significant and clinically meaningful.  \n\nDespite unequal variances (SD: F = 3.4, M = 6.3), the Mann–Whitney test is robust and valid here due to non-normality. The result suggests a gender-based difference in survival outcomes, warranting further investigation into underlying biological or social factors.  \n\n*Note: The plot (saved at `C:\\Users\\PC\\...`) visually confirms the separation in survival distributions between groups.*",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    },
+    "qwen3_4b_ft": {
+      "text": "1. Missing Data Analysis  \nNo missing values were detected in either variable (gender, overall survival months) across all 114 observations. Consequently, no rows were dropped and no imputation was performed. Because there is no missingness, there are no caveats related to missing data mechanisms (MCAR/MAR/MNAR) or imputation bias.\n\n2. Pre-Test Diagnostics  \nBoth groups (F = 57, M = 57) have equal sample sizes, which supports the use of a non-parametric test. Normality was assessed using Shapiro–Wilk tests, and both groups showed significant deviations from normality (p < 0.01), indicating that the data are not symmetrically distributed. Since the test is non-parametric, this is not a limitation.\n\n3. Test Selection Rationale  \nBecause both groups violated the normality assumption and the variances were not comparable (F: SD = 3.36, M: SD = 6.26), a parametric t-test would be invalid. The Mann–Whitney U test was selected as it does not require normality and is robust to differences in variance and distribution shape. It compares the central tendency (median) of two independent groups.\n\n4. Test Results  \nThe Mann–Whitney U test found a statistically significant difference (p = 0.0002) between the median overall survival months for females (20.7 months) and males (15.4 months). The rank-biserial effect size of −0.40 indicates a moderate to large difference in median survival, with females having longer survival times.\n\n5. Interpretation  \nFemales have significantly longer median survival than males (p < 0.001), with a moderate to large effect size. This suggests a meaningful difference in survival outcomes between genders, which may reflect biological, social, or healthcare access differences. The non-parametric nature of the test ensures validity despite non-normal distributions.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    }
+  },
+  "eval": {},
+  "_file_path": "cases\\lung_ttest_overall_survival_vs_gender.json"
+}

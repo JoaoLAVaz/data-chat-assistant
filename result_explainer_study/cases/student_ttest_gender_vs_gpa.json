@@ -1,0 +1,140 @@
+{
+  "meta": {
+    "id": "student_ttest_gender_vs_gpa",
+    "dataset_name": "student_wellbeing",
+    "test_family": "t_test",
+    "planned_test": "t_test",
+    "chosen_test": "mann_whitney",
+    "value_col": "gpa",
+    "group_col": "gender"
+  },
+  "tool_json": {
+    "schema_version": "1.0",
+    "test_family": "t_test",
+    "chosen_test": "mann_whitney",
+    "test_name": "Mann\u2013Whitney U",
+    "stats": {
+      "U": 3189.5,
+      "p_value": 0.7018576893998087,
+      "method": "auto"
+    },
+    "effect_size": {
+      "name": "rank_biserial",
+      "value": -0.035551948051947946,
+      "note": null
+    },
+    "groups": {
+      "group1": {
+        "name": "Female",
+        "n": 80,
+        "mean": 3.2063750000000004,
+        "sd": 0.2871256230602235,
+        "median": 3.295,
+        "iqr": 0.3849999999999998
+      },
+      "group2": {
+        "name": "Male",
+        "n": 77,
+        "mean": 3.216103896103896,
+        "sd": 0.2215623700008874,
+        "median": 3.25,
+        "iqr": 0.4700000000000002
+      }
+    },
+    "assumptions": {
+      "normality": {
+        "per_group": {
+          "Female": {
+            "n": 80,
+            "stat": 0.8704076190142404,
+            "p": 8.394591466517023e-07,
+            "ok": false,
+            "note": null
+          },
+          "Male": {
+            "n": 77,
+            "stat": 0.9003923005775661,
+            "p": 1.7782234125900708e-05,
+            "ok": false,
+            "note": null
+          }
+        },
+        "any_non_normal": true,
+        "tested_groups": 2,
+        "notes": []
+      },
+      "variance": {
+        "note": "Not applicable for Mann\u2013Whitney."
+      }
+    },
+    "warnings": [],
+    "plot_path": "C:\\Users\\PC\\AppData\\Local\\Temp\\ttest_a9vb8h7l.png",
+    "missing_data_report": {
+      "columns": [
+        "Gender",
+        "GPA"
+      ],
+      "rows_before": 157,
+      "total_missing": 0,
+      "missing_by_column": {
+        "Gender": 0,
+        "GPA": 0
+      },
+      "missing_rate": 0.0,
+      "policy": "none",
+      "alpha": 0.05,
+      "scope": "hybrid",
+      "mcar": {
+        "available": false,
+        "stat": null,
+        "df": null,
+        "p": null,
+        "note": null,
+        "numeric_cols_used": []
+      },
+      "mcar_proxy": {
+        "available": false,
+        "method": null,
+        "p": null,
+        "note": null
+      },
+      "imputations": {},
+      "warning": null,
+      "config": {
+        "impute_threshold": 0.2,
+        "extreme_threshold": 0.5,
+        "force_impute": false,
+        "max_cat_cardinality": 50,
+        "max_pred_missing": 0.5
+      },
+      "predictors": {
+        "selected": [],
+        "dropped": [],
+        "encoded_features": 0
+      },
+      "imputer_details": {},
+      "rows_after": 157,
+      "rows_dropped": 0
+    },
+    "_execution_context": {
+      "df_scope": "scoped"
+    }
+  },
+  "models": {
+    "gpt4": {
+      "text": "1. **Missing Data Analysis**: The dataset comprised 157 observations with no missing values across the variables of interest, namely Gender and GPA. This absence of missing data eliminates concerns regarding imputation, ensuring that the analysis is based on the complete dataset. The missing data policy was set to none, indicating that no rows were dropped or imputed.\n\n2. **Pre-Test Diagnostics**: The analysis involved two groups: Females (n=80) and Males (n=77). Normality tests indicated that neither group met the assumption of normality, with both groups showing significant deviations (p < 0.001). As the Mann-Whitney U test does not require normality, this finding supports the choice of this non-parametric test. Variance homogeneity was not applicable for this test.\n\n3. **Test Selection Rationale**: Given the violation of normality assumptions in both groups, the Mann-Whitney U test was selected. This non-parametric test is appropriate for comparing the distributions of two independent groups without assuming a normal distribution, making it suitable for the data at hand.\n\n4. **Test Results**: The Mann-Whitney U statistic was calculated to be 3189.5, with a p-value of approximately 0.702. The effect size, measured using the rank-biserial correlation, was -0.036. This indicates a negligible effect size, suggesting that the difference between the two groups is minimal.\n\n5. **Interpretation**: The findings indicate no statistically significant difference in GPA between Female and Male students (p = 0.702). The effect size further suggests that any observed difference in GPA is practically insignificant. Thus, we conclude that gender does not have a meaningful impact on GPA in this sample, reinforcing the notion that academic performance, as measured by GPA, is similar across genders in this context.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_tokens": 600
+      }
+    },
+    "qwen3_4b": {
+      "text": "### Missing Data Analysis  \nNo missing data was found in either \"Gender\" or \"GPA\" columns (total missing: 0). All 157 observations are complete, with no need for imputation or data exclusion.\n\n### Pre-Test Diagnostics  \n- **Group sizes**: 80 females, 77 males (balanced sample).  \n- **Normality**: Both groups violate normality assumptions. The Shapiro-Wilk test shows significant p-values (<0.01) for both groups, indicating non-normal distributions.  \n- **Variance**: Not applicable, as the Mann-Whitney U test does not require equal variances.\n\n### Test Selection Rationale  \nGiven the violation of normality, the Mann-Whitney U test (a non-parametric alternative) was selected instead of a t-test. This test compares medians and does not assume normality or equal variances, making it appropriate for skewed or non-normal data.\n\n### Test Results  \n- **U statistic**: 3189.5  \n- **p-value**: 0.702 \u2192 **not statistically significant**  \n- **Effect size (rank-biserial)**: \u22120.036 \u2192 very small, indicating negligible difference between groups  \n\n### Interpretation  \nThere is **no statistically significant difference** in GPA between female and male students (p = 0.70). The effect size is minimal, suggesting that any observed differences in median GPA (3.295 vs. 3.25) are likely due to random variation. Both groups have similar central tendencies and distributions, with no meaningful separation in performance.  \n\nThe analysis confirms that gender does not appear to influence GPA in this dataset. The non-normality was properly accounted for by using the Mann-Whitney test, ensuring valid inference despite the data's distributional characteristics.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    }
+  },
+  "eval": {}
+}

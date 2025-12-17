@@ -1,0 +1,119 @@
+{
+  "meta": {
+    "id": "student_corr_stress_vs_lifesatisfaction",
+    "dataset_name": "student_wellbeing",
+    "test_family": "correlation",
+    "planned_test": "correlation",
+    "chosen_test": "spearman",
+    "value_col": null,
+    "group_col": null
+  },
+  "tool_json": {
+    "schema_version": "1.0",
+    "test_family": "correlation",
+    "chosen_test": "spearman",
+    "test_name": "Spearman correlation",
+    "stats": {
+      "r": -0.8942692975368359,
+      "p_value": 5.3856147499988e-56,
+      "n": 157
+    },
+    "effect_size": {
+      "name": "correlation_r",
+      "value": -0.8942692975368359
+    },
+    "assumptions": {
+      "normality": {
+        "StressLevel": {
+          "W": 0.8911357543799749,
+          "p": 2.3325046865943965e-09,
+          "note": null
+        },
+        "LifeSatisfaction": {
+          "W": 0.7466305463047077,
+          "p": 3.673772335262612e-15,
+          "note": null
+        },
+        "alpha": 0.05,
+        "both_normal": false
+      }
+    },
+    "warnings": [],
+    "plot_path": "C:\\Users\\PC\\AppData\\Local\\Temp\\corr_ff4_mded.png",
+    "missing_data_report": {
+      "columns": [
+        "StressLevel",
+        "LifeSatisfaction"
+      ],
+      "rows_before": 157,
+      "total_missing": 0,
+      "missing_by_column": {
+        "StressLevel": 0,
+        "LifeSatisfaction": 0
+      },
+      "missing_rate": 0.0,
+      "policy": "none",
+      "alpha": 0.05,
+      "scope": "hybrid",
+      "mcar": {
+        "available": false,
+        "stat": null,
+        "df": null,
+        "p": null,
+        "note": null,
+        "numeric_cols_used": []
+      },
+      "mcar_proxy": {
+        "available": false,
+        "method": null,
+        "p": null,
+        "note": null
+      },
+      "imputations": {},
+      "warning": null,
+      "config": {
+        "impute_threshold": 0.2,
+        "extreme_threshold": 0.5,
+        "force_impute": false,
+        "max_cat_cardinality": 50,
+        "max_pred_missing": 0.5
+      },
+      "predictors": {
+        "selected": [],
+        "dropped": [],
+        "encoded_features": 0
+      },
+      "imputer_details": {},
+      "rows_after": 157,
+      "rows_dropped": 0
+    },
+    "_execution_context": {
+      "df_scope": "scoped"
+    }
+  },
+  "models": {
+    "gpt4": {
+      "text": "1. **Missing Data Analysis**: The dataset contains two variables, StressLevel and LifeSatisfaction, with a total of 157 observations. Importantly, there are no missing values in either variable, resulting in a missing rate of 0%. As a result, no imputation was necessary, and all data points were retained for analysis. This absence of missing data supports the integrity of the findings, as missingness can often bias results if not handled appropriately.\n\n2. **Pre-Test Diagnostics**: The analysis involved assessing the normality of both variables. The Shapiro-Wilk test results indicated that neither StressLevel (W = 0.891, p < 0.001) nor LifeSatisfaction (W = 0.747, p < 0.001) follows a normal distribution. Given this violation of normality, traditional parametric tests would not be suitable. Additionally, the variances of the groups were not assessed as the focus was on the correlation between two non-normally distributed variables.\n\n3. **Test Selection Rationale**: Due to the non-normal distribution of the data, the Spearman correlation was selected as the appropriate statistical test. This non-parametric method assesses the strength and direction of the association between two ranked variables, making it robust against violations of normality.\n\n4. **Test Results**: The Spearman correlation coefficient was calculated to be approximately -0.894, with a p-value of less than 0.001, based on a sample size of 157. This strong negative correlation indicates that as StressLevel increases, LifeSatisfaction tends to decrease significantly. The effect size, also represented by the correlation coefficient, further underscores the strength of this relationship.\n\n5. **Interpretation**: The findings suggest a robust inverse relationship between StressLevel and LifeSatisfaction among the participants. Practically, this implies that higher stress levels are associated with lower life satisfaction, which could have implications for mental health interventions. Statistically, the very low p-value indicates that the observed correlation is highly significant, reinforcing the reliability of this association. Overall, these results highlight the importance of managing stress to enhance life satisfaction.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_tokens": 600
+      }
+    },
+    "qwen3_4b": {
+      "text": "### Missing Data Analysis  \nNo missing data was detected in either *StressLevel* or *LifeSatisfaction* (total missing: 0 out of 157 rows). The data is complete, with no need for imputation or row dropping. Missingness is not a concern.\n\n### Pre-Test Diagnostics  \nThe data contains 157 observations. Normality was tested using the Shapiro-Wilk test for both variables:  \n- *StressLevel*: W = 0.891, p < 0.001 → significant deviation from normality  \n- *LifeSatisfaction*: W = 0.747, p < 0.001 → also non-normal  \n\nSince both variables violate normality assumptions, a parametric test (like Pearson) is not appropriate.\n\n### Test Selection Rationale  \nGiven the non-normal distribution of both variables, the **Spearman correlation** was selected. This non-parametric test does not assume normality and assesses the monotonic relationship between two variables, making it suitable for skewed or non-normal data.\n\n### Test Results  \n- **Spearman correlation coefficient (r)**: –0.894  \n- **p-value**: < 5.4 × 10⁻⁵⁶ (extremely significant)  \n\nThis indicates a **strong, negative monotonic relationship**: as stress level increases, life satisfaction tends to decrease.\n\n### Interpretation  \nThe result shows a very strong inverse association between stress and life satisfaction. Even though the data are not normally distributed, the Spearman test confirms that higher stress levels are consistently linked with lower life satisfaction across the sample. The effect size (r = –0.894) suggests a large practical and statistical significance.  \n\n*Note: The plot (available at the provided path) visually confirms this trend.*",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    },
+    "qwen3_4b_ft": {
+      "text": "1. Missing Data Analysis  \nNo missing values were detected for either variable (StressLevel, LifeSatisfaction) across all 157 observations. Consequently, no rows were dropped and no imputation was performed. Because there is no missingness, there are no caveats related to missing data mechanisms (MCAR/MAR/MNAR) or imputation bias.\n\n2. Pre-Test Diagnostics  \nBoth variables were examined for normality using Shapiro-Wilk tests. StressLevel and LifeSatisfaction both showed strong deviations from normality (p < 0.001), indicating that the data are not normally distributed. However, the correlation test was still appropriate because Spearman correlation is robust to non-normality and does not require the assumption of normality.\n\n3. Test Selection Rationale  \nGiven the non-normality of both variables, a parametric Pearson correlation was not selected. Instead, a non-parametric Spearman correlation was used. Spearman correlation assesses monotonic relationships and does not require normality, making it suitable for skewed or non-normal data.\n\n4. Test Results  \nThe Spearman correlation coefficient (r) is –0.894, with a p-value of < 5.4 × 10⁻⁵⁶. This indicates a very strong negative monotonic relationship between stress level and life satisfaction. The effect size (r = –0.894) suggests a large magnitude of association.\n\n5. Interpretation  \nThere is a very strong negative association between stress level and life satisfaction. As stress increases, life satisfaction tends to decrease. This relationship is statistically significant and robust to non-normality. The high correlation suggests that stress and life satisfaction are strongly related, though causality cannot be inferred from correlation alone.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    }
+  },
+  "eval": {},
+  "_file_path": "cases\\student_corr_stress_vs_lifesatisfaction.json"
+}

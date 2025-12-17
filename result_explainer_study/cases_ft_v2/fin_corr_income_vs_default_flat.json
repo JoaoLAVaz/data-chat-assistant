@@ -1,0 +1,141 @@
+{
+  "meta": {
+    "id": "fin_corr_income_vs_default_flat",
+    "dataset_name": "dataset_finance_risk",
+    "test_family": "correlation",
+    "planned_test": "correlation",
+    "chosen_test": "spearman",
+    "value_col": null,
+    "group_col": null
+  },
+  "tool_json": {
+    "schema_version": "1.0",
+    "test_family": "correlation",
+    "chosen_test": "spearman",
+    "test_name": "Spearman correlation",
+    "stats": {
+      "r": -0.06063125215653304,
+      "p_value": 0.22630055866821008,
+      "n": 400
+    },
+    "effect_size": {
+      "name": "correlation_r",
+      "value": -0.06063125215653304
+    },
+    "assumptions": {
+      "normality": {
+        "income": {
+          "W": 0.9796709520790291,
+          "p": 2.0857207768081487e-05,
+          "note": null
+        },
+        "default_flag": {
+          "W": 0.2046955485750439,
+          "p": 6.135990421259098e-38,
+          "note": null
+        },
+        "alpha": 0.05,
+        "both_normal": false
+      }
+    },
+    "warnings": [],
+    "plot_path": "C:\\Users\\PC\\AppData\\Local\\Temp\\corr_5zverm5a.png",
+    "missing_data_report": {
+      "columns": [
+        "income",
+        "default_flag"
+      ],
+      "rows_before": 400,
+      "total_missing": 40,
+      "missing_by_column": {
+        "income": 37,
+        "default_flag": 3
+      },
+      "missing_rate": 0.05,
+      "policy": "simple_impute",
+      "alpha": 0.05,
+      "scope": "hybrid",
+      "mcar": {
+        "available": false,
+        "stat": null,
+        "df": null,
+        "p": null,
+        "note": "No MCAR function found in this Pingouin version.",
+        "numeric_cols_used": [
+          "income",
+          "record_id",
+          "credit_score",
+          "debt_ratio",
+          "default_flag"
+        ]
+      },
+      "mcar_proxy": {
+        "available": false,
+        "method": null,
+        "p": null,
+        "note": null
+      },
+      "imputations": {
+        "income": {
+          "strategy": "iterative"
+        },
+        "default_flag": {
+          "strategy": "iterative"
+        }
+      },
+      "warning": null,
+      "config": {
+        "impute_threshold": 0.2,
+        "extreme_threshold": 0.5,
+        "force_impute": false,
+        "max_cat_cardinality": 50,
+        "max_pred_missing": 0.5
+      },
+      "predictors": {
+        "selected": [
+          "record_id",
+          "loan_type",
+          "income",
+          "credit_score",
+          "debt_ratio"
+        ],
+        "dropped": [],
+        "encoded_features": 8
+      },
+      "imputer_details": {
+        "n_features": 9,
+        "max_iter": 10
+      },
+      "rows_after": 400,
+      "rows_dropped": 0
+    },
+    "_execution_context": {
+      "df_scope": "scoped"
+    }
+  },
+  "models": {
+    "gpt4": {
+      "text": "1. **Missing Data Analysis**: The dataset initially contained 400 rows, with a total of 40 missing values, resulting in a missing rate of 5%. Specifically, 37 missing values were found in the income variable, while the default_flag variable had 3 missing values. To address this, an iterative imputation strategy was employed for both variables. It is important to note that the missing data was not assessed for missing completely at random (MCAR), as the necessary functions were unavailable. This could introduce bias if the missingness is related to the values of the variables themselves.\n\n2. **Pre-Test Diagnostics**: The analysis included 400 observations. Normality tests indicated that neither the income nor the default_flag variables followed a normal distribution, as evidenced by significant Shapiro-Wilk test results (p < 0.05). This violation of normality suggests that parametric tests may not be appropriate. Additionally, variance homogeneity was not explicitly tested, but the choice of a non-parametric test implies concerns regarding equal variance across groups.\n\n3. **Test Selection Rationale**: Given the non-normal distribution of the data and the nature of the variables involved, the Spearman correlation was selected. This non-parametric test is suitable for assessing the strength and direction of the association between two ranked variables, making it appropriate when normality assumptions are violated.\n\n4. **Test Results**: The Spearman correlation coefficient was calculated to be approximately -0.061, with a p-value of 0.226. This indicates a very weak negative correlation between the variables analyzed. The sample size for this test was 400 observations, providing sufficient power to detect effects if they were present.\n\n5. **Interpretation**: The findings suggest that there is no statistically significant correlation between the income and default_flag variables, as indicated by the p-value exceeding the conventional alpha level of 0.05. The weak negative correlation coefficient further implies that as income increases, there is a negligible tendency for the default_flag to decrease, but this relationship is not strong enough to be meaningful in practical terms. Overall, the results indicate that income does not have a discernible impact on the likelihood of default in this dataset.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_tokens": 600
+      }
+    },
+    "qwen3_4b": {
+      "text": "### Missing Data Analysis  \nMissing data exists in both *income* (37 cases) and *default_flag* (3 cases), totaling 40 missing values (5% of 400 rows). The missingness is not random (MCAR not tested), but the data were imputed using iterative methods for both variables. No rows were dropped; the dataset size remains at 400. Imputation was applied to preserve sample size and avoid bias.\n\n### Pre-Test Diagnostics  \nThe data do not meet normality assumptions for both variables. The *income* variable shows strong deviation from normality (p < 0.001), and *default_flag* is even more non-normal (p < 10⁻³⁷). Since normality is violated, parametric tests (e.g., Pearson) are not appropriate.\n\n### Test Selection Rationale  \nGiven the non-normality, the **Spearman correlation** test was selected. It is robust to non-normal distributions and does not require assumptions of linearity or equal variances. It assesses the monotonic relationship between *income* and *default_flag*.\n\n### Test Results  \nThe Spearman correlation coefficient is **r = –0.061** (p = 0.23), with a sample size of 400. The effect size is small and negative, indicating a weak inverse trend. However, the p-value (0.23) is greater than 0.05, so the result is **not statistically significant**.\n\n### Interpretation  \nThere is no statistically significant monotonic relationship between income and default_flag. The weak negative correlation suggests a minimal, non-significant inverse association—meaning higher income is not strongly linked to lower default rates in this dataset. The result is consistent with the data’s non-normality and small effect size.  \n\n*Note: The test is robust to non-normality, but the lack of significance implies no meaningful association under the current model.*",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    },
+    "qwen3_4b_ft_v2": {
+      "text": "### Missing Data Analysis  \nMissing data was present in both *income* (37 cases) and *default_flag* (3 cases), totaling 40 missing values (5% of 400 rows). The missingness was imputed using iterative imputation, with no rows dropped. No evidence of MCAR (Missing Completely at Random) was assessed due to version limitations. The imputation strategy preserved data integrity without introducing bias.\n\n### Pre-Test Diagnostics  \nThe sample size is *n = 400*, which is large enough for robust inference. Normality checks (via Shapiro-Wilk) were conducted for *income* and *default_flag*. However, the test concluded that both variables are **not jointly normal** (p < 0.05), violating the normality assumption for Pearson correlation.\n\n### Test Selection Rationale  \nGiven the non-normality of the data, the **Spearman correlation** was selected instead of Pearson. Spearman is robust to non-normality and monotonic relationships, making it appropriate for ordinal or skewed data.\n\n### Test Results  \nThe Spearman correlation coefficient is **r = –0.061** (p = 0.23). This indicates a **very weak negative association** between income and default_flag, which is not statistically significant (p > 0.05).\n\n### Interpretation  \nThere is no statistically significant relationship between income and the likelihood of default. The slight negative trend (r ≈ –0.06) may reflect minor variation but is too weak to be meaningful in practice. The result is consistent with the data's non-normality and supports the use of a non-parametric test.  \n\nNo warnings were issued, and the analysis is valid under the chosen assumptions.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    }
+  },
+  "eval": {},
+  "_file_path": "cases\\fin_corr_income_vs_default_flat.json"
+}

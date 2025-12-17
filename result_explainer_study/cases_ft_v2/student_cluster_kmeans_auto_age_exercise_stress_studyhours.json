@@ -1,0 +1,361 @@
+{
+  "meta": {
+    "id": "student_cluster_kmeans_auto_age_exercise_stress_studyhours",
+    "dataset_name": "student_wellbeing",
+    "test_family": "clustering",
+    "planned_test": "clustering",
+    "chosen_test": null,
+    "value_col": null,
+    "group_col": null,
+    "features": [
+      "Age",
+      "ExerciseFrequency",
+      "StressLevel",
+      "StudyHoursPerWeek"
+    ],
+    "method": "kmeans"
+  },
+  "tool_json": {
+    "schema_version": "1.0",
+    "test_family": "clustering",
+    "method": "kmeans",
+    "method_params": {
+      "k": 8,
+      "selection": "auto"
+    },
+    "preprocessing_report": {
+      "selected_features": [
+        "Age",
+        "ExerciseFrequency",
+        "StressLevel",
+        "StudyHoursPerWeek"
+      ],
+      "dropped_features": [],
+      "imputation": {
+        "Age": {
+          "type": "numerical",
+          "strategy": "median",
+          "value": 20.0
+        },
+        "ExerciseFrequency": {
+          "type": "numerical",
+          "strategy": "median",
+          "value": 2.0
+        },
+        "StressLevel": {
+          "type": "numerical",
+          "strategy": "median",
+          "value": 4.89
+        },
+        "StudyHoursPerWeek": {
+          "type": "numerical",
+          "strategy": "median",
+          "value": 14.6
+        }
+      },
+      "scaling": {
+        "standardize": true,
+        "scaler": "StandardScaler",
+        "n_features": 4
+      },
+      "encoded_columns": [
+        "Age",
+        "ExerciseFrequency",
+        "StressLevel",
+        "StudyHoursPerWeek"
+      ],
+      "n_samples": 157,
+      "n_model_features": 4
+    },
+    "model_report": {
+      "silhouette": 0.543654646277706,
+      "cluster_sizes": {
+        "0": 13,
+        "1": 32,
+        "2": 22,
+        "3": 32,
+        "4": 17,
+        "5": 15,
+        "6": 3,
+        "7": 23
+      }
+    },
+    "cluster_profiles": {
+      "Age": {
+        "0": 19.46153846153846,
+        "1": 21.375,
+        "2": 19.772727272727273,
+        "3": 18.71875,
+        "4": 22.235294117647058,
+        "5": 19.733333333333334,
+        "6": 18.333333333333332,
+        "7": 18.304347826086957
+      },
+      "ExerciseFrequency": {
+        "0": 4.0,
+        "1": 2.0,
+        "2": 1.9545454545454546,
+        "3": 3.0,
+        "4": 1.0,
+        "5": 2.0,
+        "6": 1.3333333333333333,
+        "7": 3.0
+      },
+      "StressLevel": {
+        "0": 4.152307692307691,
+        "1": 6.168125,
+        "2": 4.955454545454546,
+        "3": 4.594375,
+        "4": 7.10235294117647,
+        "5": 4.880666666666667,
+        "6": 6.153333333333333,
+        "7": 4.325652173913045
+      },
+      "StudyHoursPerWeek": {
+        "0": 15.823076923076922,
+        "1": 12.478125,
+        "2": 17.886363636363637,
+        "3": 17.45625,
+        "4": 9.782352941176471,
+        "5": 14.846666666666666,
+        "6": 11.333333333333334,
+        "7": 13.839130434782609
+      }
+    },
+    "plot_paths": {
+      "pca_scatter": "C:\\Users\\PC\\AppData\\Local\\Temp\\cluster_pca_8fxq0k7_.png",
+      "centroid_heatmap": "C:\\Users\\PC\\AppData\\Local\\Temp\\cluster_heatmap_r6c7g397.png"
+    },
+    "plot_path": "C:\\Users\\PC\\AppData\\Local\\Temp\\cluster_pca_8fxq0k7_.png",
+    "cluster_assignments_sample": [
+      {
+        "index": 0,
+        "cluster": 5
+      },
+      {
+        "index": 1,
+        "cluster": 7
+      },
+      {
+        "index": 2,
+        "cluster": 2
+      },
+      {
+        "index": 3,
+        "cluster": 1
+      },
+      {
+        "index": 4,
+        "cluster": 0
+      },
+      {
+        "index": 5,
+        "cluster": 5
+      },
+      {
+        "index": 6,
+        "cluster": 4
+      },
+      {
+        "index": 7,
+        "cluster": 7
+      },
+      {
+        "index": 8,
+        "cluster": 6
+      },
+      {
+        "index": 9,
+        "cluster": 3
+      },
+      {
+        "index": 10,
+        "cluster": 5
+      },
+      {
+        "index": 11,
+        "cluster": 6
+      },
+      {
+        "index": 12,
+        "cluster": 0
+      },
+      {
+        "index": 13,
+        "cluster": 5
+      },
+      {
+        "index": 14,
+        "cluster": 3
+      },
+      {
+        "index": 15,
+        "cluster": 2
+      },
+      {
+        "index": 16,
+        "cluster": 6
+      },
+      {
+        "index": 17,
+        "cluster": 7
+      },
+      {
+        "index": 18,
+        "cluster": 4
+      },
+      {
+        "index": 19,
+        "cluster": 2
+      },
+      {
+        "index": 20,
+        "cluster": 7
+      },
+      {
+        "index": 21,
+        "cluster": 1
+      },
+      {
+        "index": 22,
+        "cluster": 3
+      },
+      {
+        "index": 23,
+        "cluster": 5
+      },
+      {
+        "index": 24,
+        "cluster": 1
+      },
+      {
+        "index": 25,
+        "cluster": 3
+      },
+      {
+        "index": 26,
+        "cluster": 0
+      },
+      {
+        "index": 27,
+        "cluster": 4
+      },
+      {
+        "index": 28,
+        "cluster": 2
+      },
+      {
+        "index": 29,
+        "cluster": 7
+      },
+      {
+        "index": 30,
+        "cluster": 1
+      },
+      {
+        "index": 31,
+        "cluster": 2
+      },
+      {
+        "index": 32,
+        "cluster": 3
+      },
+      {
+        "index": 33,
+        "cluster": 1
+      },
+      {
+        "index": 34,
+        "cluster": 3
+      },
+      {
+        "index": 35,
+        "cluster": 0
+      },
+      {
+        "index": 36,
+        "cluster": 4
+      },
+      {
+        "index": 37,
+        "cluster": 2
+      },
+      {
+        "index": 38,
+        "cluster": 7
+      },
+      {
+        "index": 39,
+        "cluster": 1
+      },
+      {
+        "index": 40,
+        "cluster": 3
+      },
+      {
+        "index": 41,
+        "cluster": 5
+      },
+      {
+        "index": 42,
+        "cluster": 1
+      },
+      {
+        "index": 43,
+        "cluster": 3
+      },
+      {
+        "index": 44,
+        "cluster": 7
+      },
+      {
+        "index": 45,
+        "cluster": 1
+      },
+      {
+        "index": 46,
+        "cluster": 2
+      },
+      {
+        "index": 47,
+        "cluster": 7
+      },
+      {
+        "index": 48,
+        "cluster": 4
+      },
+      {
+        "index": 49,
+        "cluster": 3
+      }
+    ],
+    "_execution_context": {
+      "df_scope": "full"
+    }
+  },
+  "models": {
+    "gpt4": {
+      "text": "1. **Missing Data Analysis**: The analysis included four features: Age, Exercise Frequency, Stress Level, and Study Hours Per Week. Missing values were addressed using median imputation, with specific values assigned for each feature. This method is robust against outliers but assumes that the missing data is missing at random. While median imputation helps maintain the dataset size, it may not capture the underlying distribution of the data, potentially affecting the clustering results.\n\n2. **Pre-Test Diagnostics**: The dataset comprised 157 samples with four selected features. No features were dropped during preprocessing. The data was standardized using a standard scaler to ensure that all features contributed equally to the clustering process. Normality and variance checks were not explicitly reported, but standardization suggests that variance was considered, as it helps to mitigate issues related to differing scales among features.\n\n3. **Test Selection Rationale**: K-means clustering was chosen for this analysis, with the number of clusters (k) set to 8. This method is suitable for partitioning the dataset into distinct groups based on feature similarity. K-means is particularly effective when the clusters are spherical and evenly sized, which aligns with the nature of the selected features.\n\n4. **Test Results**: The clustering yielded a silhouette score of approximately 0.54, indicating a moderate level of separation between clusters. The sizes of the clusters varied, with the largest containing 32 samples and the smallest containing just 3. This variability in cluster sizes suggests that the data may not be uniformly distributed across all clusters.\n\n5. **Interpretation**: The findings reveal that the dataset can be effectively segmented into 8 distinct groups based on the selected features. The moderate silhouette score implies that while there is some overlap between clusters, they are generally well-defined. Each cluster exhibits unique profiles in terms of Age, Exercise Frequency, Stress Level, and Study Hours Per Week, which can inform targeted interventions or further analysis. For instance, clusters with higher stress levels and lower exercise frequencies may indicate groups that could benefit from wellness programs. Overall, the results provide valuable insights into the underlying patterns within the data, guiding future research or practical applications.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_tokens": 600
+      }
+    },
+    "qwen3_4b": {
+      "text": "The analysis performed a **k-means clustering** on 157 individuals using four key features: *Age*, *ExerciseFrequency*, *StressLevel*, and *StudyHoursPerWeek*. Missing values in all features were imputed using the median value for each variable, ensuring robustness without introducing bias. All features were standardized to ensure equal scale, as required by k-means.\n\nThe algorithm selected **8 clusters** via automatic selection, with a silhouette score of **0.54**, indicating moderate cluster separation. Higher values (closer to 1) would suggest tighter, more distinct groups, so this suggests reasonable but not optimal grouping.\n\nCluster sizes range from 3 to 32, with clusters 1, 3, and 5 being the largest. The cluster profiles reveal distinct patterns:\n- **Cluster 1** and **3** show low exercise frequency and stress, with moderate study hours.\n- **Cluster 4** has high stress and low study hours.\n- **Cluster 2** and **7** show balanced activity and study time, with moderate stress.\n- **Cluster 0** has younger age, low stress, and average study hours.\n\nThe model assigns individuals to clusters based on their feature profiles. For example, individuals with low exercise and stress (e.g., cluster 1) differ from those with high stress and low study hours (e.g., cluster 4).\n\n**Interpretation**: The clustering reveals distinct behavioral and lifestyle groups among participants. These could be used to tailor interventions—e.g., stress management for high-stress clusters or activity promotion for low-exercise groups. The moderate silhouette score suggests the clusters are interpretable but may benefit from further validation or feature refinement.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    },
+    "qwen3_4b_ft_v2": {
+      "text": "### Clustering Analysis Summary\n\n**1. Missing Data Analysis**  \nMissing values were present in all four features (Age, ExerciseFrequency, StressLevel, StudyHoursPerWeek), but were imputed using median values:  \n- Age: 20.0, ExerciseFrequency: 2.0, StressLevel: 4.89, StudyHoursPerWeek: 14.6.  \nNo features were dropped. All data were numerically scaled and standardized prior to clustering.\n\n**2. Pre-Test Diagnostics**  \n- Dataset size: 157 samples.  \n- Features selected: Age, ExerciseFrequency, StressLevel, StudyHoursPerWeek.  \n- Features were standardized to ensure equal variance across variables.\n\n**3. Test Selection Rationale**  \nK-means clustering was used due to its simplicity, interpretability, and suitability for continuous, numerical data with spherical clusters. The number of clusters (k=8) was selected via automatic selection (\"auto\") to balance model complexity and interpretability.\n\n**4. Test Results**  \n- Silhouette score: **0.54**, indicating moderate cluster separation (values range 0–1).  \n- Cluster sizes: Most clusters have 13–32 members (e.g., clusters 1, 3, and 5 are largest).  \n- Cluster 6 and 7 are small (3 and 23 members), suggesting potential outliers or rare subgroups.\n\n**5. Interpretation**  \nThe clusters show distinct patterns in student profiles:  \n- **Cluster 1 & 3**: Lower study hours, moderate stress, low exercise frequency.  \n- **Cluster 4 & 5**: Higher stress, lower study hours, younger age.  \n- **Cluster 2 & 7**: Balanced activity and study hours, with moderate stress.  \n\nThe results suggest that students can be grouped into 8 distinct behavioral profiles based on lifestyle and academic habits. These profiles may inform targeted interventions (e.g., stress management for high-stress groups).  \n\n*Note: The model is exploratory; further validation with domain experts is recommended.*",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    }
+  },
+  "eval": {},
+  "_file_path": "cases\\student_cluster_kmeans_auto_age_exercise_stress_studyhours.json"
+}

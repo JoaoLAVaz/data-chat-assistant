@@ -1,0 +1,319 @@
+{
+  "meta": {
+    "id": "mfg_cluster_kmeans_auto_pressure_weight",
+    "dataset_name": "dataset_manufacturing_sensor",
+    "test_family": "clustering",
+    "planned_test": "clustering",
+    "chosen_test": null,
+    "value_col": null,
+    "group_col": null,
+    "features": [
+      "pressure_psi",
+      "weight_g"
+    ],
+    "method": "kmeans"
+  },
+  "tool_json": {
+    "schema_version": "1.0",
+    "test_family": "clustering",
+    "method": "kmeans",
+    "method_params": {
+      "k": 6,
+      "selection": "auto"
+    },
+    "preprocessing_report": {
+      "selected_features": [
+        "pressure_psi",
+        "weight_g"
+      ],
+      "dropped_features": [],
+      "imputation": {
+        "pressure_psi": {
+          "type": "numerical",
+          "strategy": "median",
+          "value": 120.34
+        },
+        "weight_g": {
+          "type": "numerical",
+          "strategy": "median",
+          "value": 581.085
+        }
+      },
+      "scaling": {
+        "standardize": true,
+        "scaler": "StandardScaler",
+        "n_features": 2
+      },
+      "encoded_columns": [
+        "pressure_psi",
+        "weight_g"
+      ],
+      "n_samples": 200,
+      "n_model_features": 2
+    },
+    "model_report": {
+      "silhouette": 0.37389603463529303,
+      "cluster_sizes": {
+        "0": 61,
+        "1": 28,
+        "2": 43,
+        "3": 23,
+        "4": 28,
+        "5": 17
+      }
+    },
+    "cluster_profiles": {
+      "pressure_psi": {
+        "0": 120.40868852459015,
+        "1": 122.37892857142859,
+        "2": 121.32116279069768,
+        "3": 108.96260869565216,
+        "4": 130.9867857142857,
+        "5": 111.13
+      },
+      "weight_g": {
+        "0": 581.8412295081968,
+        "1": 591.3225000000001,
+        "2": 574.7574418604651,
+        "3": 577.9765217391304,
+        "4": 582.1344642857142,
+        "5": 586.3011764705882
+      }
+    },
+    "plot_paths": {
+      "pca_scatter": "C:\\Users\\PC\\AppData\\Local\\Temp\\cluster_pca_s2s56xim.png",
+      "centroid_heatmap": "C:\\Users\\PC\\AppData\\Local\\Temp\\cluster_heatmap_6gegnz1r.png"
+    },
+    "plot_path": "C:\\Users\\PC\\AppData\\Local\\Temp\\cluster_pca_s2s56xim.png",
+    "cluster_assignments_sample": [
+      {
+        "index": 0,
+        "cluster": 4
+      },
+      {
+        "index": 1,
+        "cluster": 0
+      },
+      {
+        "index": 2,
+        "cluster": 3
+      },
+      {
+        "index": 3,
+        "cluster": 4
+      },
+      {
+        "index": 4,
+        "cluster": 4
+      },
+      {
+        "index": 5,
+        "cluster": 2
+      },
+      {
+        "index": 6,
+        "cluster": 0
+      },
+      {
+        "index": 7,
+        "cluster": 5
+      },
+      {
+        "index": 8,
+        "cluster": 2
+      },
+      {
+        "index": 9,
+        "cluster": 4
+      },
+      {
+        "index": 10,
+        "cluster": 4
+      },
+      {
+        "index": 11,
+        "cluster": 4
+      },
+      {
+        "index": 12,
+        "cluster": 0
+      },
+      {
+        "index": 13,
+        "cluster": 3
+      },
+      {
+        "index": 14,
+        "cluster": 0
+      },
+      {
+        "index": 15,
+        "cluster": 3
+      },
+      {
+        "index": 16,
+        "cluster": 1
+      },
+      {
+        "index": 17,
+        "cluster": 2
+      },
+      {
+        "index": 18,
+        "cluster": 1
+      },
+      {
+        "index": 19,
+        "cluster": 3
+      },
+      {
+        "index": 20,
+        "cluster": 0
+      },
+      {
+        "index": 21,
+        "cluster": 5
+      },
+      {
+        "index": 22,
+        "cluster": 5
+      },
+      {
+        "index": 23,
+        "cluster": 5
+      },
+      {
+        "index": 24,
+        "cluster": 0
+      },
+      {
+        "index": 25,
+        "cluster": 4
+      },
+      {
+        "index": 26,
+        "cluster": 1
+      },
+      {
+        "index": 27,
+        "cluster": 0
+      },
+      {
+        "index": 28,
+        "cluster": 0
+      },
+      {
+        "index": 29,
+        "cluster": 0
+      },
+      {
+        "index": 30,
+        "cluster": 5
+      },
+      {
+        "index": 31,
+        "cluster": 2
+      },
+      {
+        "index": 32,
+        "cluster": 2
+      },
+      {
+        "index": 33,
+        "cluster": 4
+      },
+      {
+        "index": 34,
+        "cluster": 2
+      },
+      {
+        "index": 35,
+        "cluster": 0
+      },
+      {
+        "index": 36,
+        "cluster": 3
+      },
+      {
+        "index": 37,
+        "cluster": 3
+      },
+      {
+        "index": 38,
+        "cluster": 2
+      },
+      {
+        "index": 39,
+        "cluster": 0
+      },
+      {
+        "index": 40,
+        "cluster": 1
+      },
+      {
+        "index": 41,
+        "cluster": 3
+      },
+      {
+        "index": 42,
+        "cluster": 4
+      },
+      {
+        "index": 43,
+        "cluster": 2
+      },
+      {
+        "index": 44,
+        "cluster": 0
+      },
+      {
+        "index": 45,
+        "cluster": 5
+      },
+      {
+        "index": 46,
+        "cluster": 3
+      },
+      {
+        "index": 47,
+        "cluster": 2
+      },
+      {
+        "index": 48,
+        "cluster": 2
+      },
+      {
+        "index": 49,
+        "cluster": 0
+      }
+    ],
+    "_execution_context": {
+      "df_scope": "full"
+    }
+  },
+  "models": {
+    "gpt4": {
+      "text": "1. **Missing Data Analysis**: The analysis involved two features: pressure (in psi) and weight (in grams). Both features had missing values that were addressed using median imputation, with values of 120.34 psi for pressure and 581.085 g for weight. While median imputation is robust against outliers, it assumes that the missing data is missing at random, which may not always hold true. Therefore, caution should be exercised when interpreting results, as the imputation method can influence cluster characteristics.\n\n2. **Pre-Test Diagnostics**: The dataset comprised 200 samples with two selected features. No features were dropped during preprocessing, and both features were standardized using a StandardScaler to ensure they were on a similar scale. Normality and variance checks were not explicitly reported, but standardization suggests that the analysis assumed that the features were approximately normally distributed and had similar variances, which is a common prerequisite for clustering methods.\n\n3. **Test Selection Rationale**: K-means clustering was chosen for this analysis, with the number of clusters (k) set to 6. This method is effective for partitioning data into distinct groups based on feature similarity. The selection of k was automated, likely based on criteria such as the elbow method or silhouette scores, which help determine the optimal number of clusters for the dataset.\n\n4. **Test Results**: The clustering yielded a silhouette score of approximately 0.37, indicating a moderate level of separation between clusters. The sizes of the clusters varied, with the largest containing 61 samples and the smallest containing 17. The cluster centroids for pressure ranged from approximately 108.96 to 130.99 psi, and for weight, from about 574.76 to 591.32 g.\n\n5. **Interpretation**: The moderate silhouette score suggests that while there is some degree of separation between clusters, there is also overlap, indicating that the clusters may not be distinctly defined. Practically, this means that while the clustering provides insights into groupings within the data, further refinement or exploration may be necessary to enhance clarity. The identified clusters can inform targeted strategies or analyses based on the characteristics of pressure and weight, but the potential for misclassification should be acknowledged due to the moderate clustering quality.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_tokens": 600
+      }
+    },
+    "qwen3_4b": {
+      "text": "### Clustering Analysis Summary\n\n**1. Missing Data Analysis**  \nMissing values in `pressure_psi` and `weight_g` were imputed using the median value (120.34 psi and 581.085 g, respectively), ensuring no data loss. No features were dropped.\n\n**2. Pre-Test Diagnostics**  \nThe analysis used two key features: pressure (psi) and weight (g), with 200 samples. Data were standardized to ensure equal scale, as required for K-means. No categorical encoding was needed.\n\n**3. Test Selection Rationale**  \nK-means clustering was selected due to its effectiveness with continuous, numerical data and the presence of well-defined, spherical clusters. The `k=6` clusters were determined automatically via the \"auto\" selection method, which likely used the elbow method or silhouette optimization.\n\n**4. Test Results**  \n- **Silhouette Score**: 0.37 (moderate separation between clusters; values >0.3 indicate reasonable cohesion).  \n- **Cluster Sizes**: 61, 28, 43, 23, 28, 17 — indicating uneven group sizes, with cluster 0 being the largest.  \n- **Cluster Profiles**:  \n  - Cluster 0: Avg. pressure ~120.4 psi, weight ~581.8 g  \n  - Cluster 1: Higher pressure (~122.4 psi), slightly heavier (~591 g)  \n  - Cluster 3: Lower pressure (~109 psi), lighter (~578 g)  \n  - Cluster 4: Higher pressure (~131 psi), similar weight (~582 g)  \n  - Cluster 5: Lower pressure (~111 psi), heavier (~586 g)\n\n**5. Interpretation**  \nThe clusters show distinct patterns in pressure and weight. Cluster 0 and 4 represent the most common groupings, with cluster 4 showing higher pressure and cluster 5 showing higher weight. The moderate silhouette score suggests clear groupings but room for refinement. The results can be visualized via PCA scatter plots and centroid heatmaps (available in the output folder).  \n\nThis clustering may help segment products or units for quality control, maintenance, or performance analysis.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    },
+    "qwen3_4b_ft": {
+      "text": "1. Missing Data Analysis  \nNo missing values were detected in the two variables used (pressure in psi and weight in grams), so no imputation was needed. Both variables were median-imputed in the preprocessing step, but since there were no missing values, the median values (120.34 psi, 581.09 g) are simply the central tendency of the full dataset. No caveats related to missingness were identified.\n\n2. Pre-Test Diagnostics  \nThe analysis used 200 samples with two features (pressure and weight), which is sufficient for clustering. Both variables were standardized (scaled to zero mean and unit variance) to ensure equal influence of each variable in the clustering process. No outliers or extreme values were flagged in the preprocessing.\n\n3. Test Selection Rationale  \nK-means clustering was selected because it is appropriate for continuous, univariate data with well-defined clusters. The number of clusters (k=6) was determined automatically using the “auto” selection method, which typically relies on the elbow method or silhouette analysis. The silhouette score (0.37) indicates moderate cluster separation, suggesting that the clusters are somewhat distinct but not strongly separated.\n\n4. Test Results  \nThe k-means algorithm identified 6 clusters. Cluster sizes ranged from 17 to 61, with the largest cluster (size 61) being the most populous. The cluster profiles show variation in both pressure and weight across clusters. For example, cluster 4 has higher pressure (130.99 psi) and weight (582.13 g), while cluster 3 has lower pressure (108.96 psi) and weight (577.98 g).\n\n5. Interpretation  \nThe results suggest that the 200 samples can be grouped into 6 distinct patterns based on pressure and weight. These patterns may reflect different manufacturing batches, material types, or operational conditions. The moderate silhouette score indicates that the clusters are identifiable but not perfectly separated. Further domain-specific interpretation is needed to understand the practical meaning of each cluster.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    }
+  },
+  "eval": {},
+  "_file_path": "cases\\mfg_cluster_kmeans_auto_pressure_weight.json"
+}

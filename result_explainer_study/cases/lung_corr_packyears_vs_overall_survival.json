@@ -1,0 +1,171 @@
+{
+  "meta": {
+    "id": "lung_corr_packyears_vs_overall_survival",
+    "dataset_name": "lung_cancer_missingvals",
+    "test_family": "correlation",
+    "planned_test": "correlation",
+    "chosen_test": "spearman",
+    "value_col": null,
+    "group_col": null
+  },
+  "tool_json": {
+    "schema_version": "1.0",
+    "test_family": "correlation",
+    "chosen_test": "spearman",
+    "test_name": "Spearman correlation",
+    "stats": {
+      "r": -0.6474916438956163,
+      "p_value": 6.975680115366061e-15,
+      "n": 114
+    },
+    "effect_size": {
+      "name": "correlation_r",
+      "value": -0.6474916438956163
+    },
+    "assumptions": {
+      "normality": {
+        "pack_years": {
+          "W": 0.9459469193986176,
+          "p": 0.0001670004065598218,
+          "note": null
+        },
+        "overall_survival_months": {
+          "W": 0.9294889307824639,
+          "p": 1.4494969567671914e-05,
+          "note": null
+        },
+        "alpha": 0.05,
+        "both_normal": false
+      }
+    },
+    "warnings": [],
+    "plot_path": "C:\\Users\\PC\\AppData\\Local\\Temp\\corr_gim1r45k.png",
+    "missing_data_report": {
+      "columns": [
+        "pack_years",
+        "overall_survival_months"
+      ],
+      "rows_before": 114,
+      "total_missing": 60,
+      "missing_by_column": {
+        "pack_years": 60,
+        "overall_survival_months": 0
+      },
+      "missing_rate": 0.2631578947368421,
+      "policy": "simple_impute",
+      "alpha": 0.05,
+      "scope": "hybrid",
+      "mcar": {
+        "available": false,
+        "stat": null,
+        "df": null,
+        "p": null,
+        "note": "No MCAR function found in this Pingouin version.",
+        "numeric_cols_used": [
+          "pack_years",
+          "age",
+          "performance_status",
+          "progression_free_survival_months",
+          "overall_survival_months"
+        ]
+      },
+      "mcar_proxy": {
+        "available": false,
+        "method": null,
+        "p": null,
+        "note": null
+      },
+      "imputations": {
+        "pack_years": {
+          "strategy": "iterative"
+        },
+        "overall_survival_months": {
+          "strategy": "none"
+        }
+      },
+      "warning": "Moderate missingness (> impute_threshold). Used imputation; results may be sensitive to imputation assumptions.",
+      "config": {
+        "impute_threshold": 0.2,
+        "extreme_threshold": 0.5,
+        "force_impute": false,
+        "max_cat_cardinality": 50,
+        "max_pred_missing": 0.5
+      },
+      "predictors": {
+        "selected": [
+          "age",
+          "gender",
+          "smoking_history",
+          "histology",
+          "stage",
+          "tnm_classification",
+          "primary_location",
+          "performance_status",
+          "weight_loss",
+          "comorbidities",
+          "treatment_type",
+          "chemotherapy_regimen",
+          "response",
+          "progression_free_survival_months",
+          "status"
+        ],
+        "dropped": [
+          {
+            "name": "patient_id",
+            "reason": "high_cardinality(114)"
+          },
+          {
+            "name": "pack_years",
+            "reason": "missing_rate>0.50"
+          },
+          {
+            "name": "diagnosis_date",
+            "reason": "high_cardinality(110)"
+          },
+          {
+            "name": "surgery_type",
+            "reason": "missing_rate>0.50"
+          },
+          {
+            "name": "radiation_dose_gy",
+            "reason": "missing_rate>0.50"
+          },
+          {
+            "name": "targeted_therapy",
+            "reason": "missing_rate>0.50"
+          },
+          {
+            "name": "immunotherapy",
+            "reason": "missing_rate>0.50"
+          }
+        ],
+        "encoded_features": 79
+      },
+      "imputer_details": {
+        "note": "no missing in target"
+      },
+      "rows_after": 114,
+      "rows_dropped": 0
+    },
+    "_execution_context": {
+      "df_scope": "scoped"
+    }
+  },
+  "models": {
+    "gpt4": {
+      "text": "1. **Missing Data Analysis**: The dataset initially contained 114 observations, with a total of 60 missing values, resulting in a missingness rate of approximately 26%. The variable \"pack_years\" accounted for all missing data, while \"overall_survival_months\" had no missing values. Given the moderate level of missingness, an iterative imputation strategy was employed for \"pack_years\" to estimate the missing values, while \"overall_survival_months\" was retained without imputation. It is important to note that the assumptions regarding the missing data mechanism could not be fully assessed, as the tests for missing completely at random (MCAR) were not available in the analysis tool.\n\n2. **Pre-Test Diagnostics**: The analysis involved 114 observations. Normality tests indicated that neither \"pack_years\" nor \"overall_survival_months\" followed a normal distribution, as evidenced by significant Shapiro-Wilk test results (p < 0.05). This violation of normality assumptions suggests that parametric tests would not be appropriate for this analysis.\n\n3. **Test Selection Rationale**: Given the non-normal distribution of the data and the ordinal nature of the variables involved, the Spearman correlation was selected. This non-parametric test is suitable for assessing the strength and direction of the association between two ranked variables, making it an appropriate choice in this context.\n\n4. **Test Results**: The Spearman correlation coefficient was found to be approximately -0.65, indicating a strong negative correlation between the variables. The p-value associated with this correlation was extremely low (p < 0.0001), suggesting that the observed correlation is statistically significant. The effect size, also represented by the correlation coefficient, reinforces the strength of the relationship.\n\n5. **Interpretation**: The findings indicate a substantial inverse relationship between \"pack_years\" and \"overall_survival_months.\" Practically, this suggests that as the number of pack years increases, the overall survival time tends to decrease, which may have important implications for understanding the impact of smoking history on patient outcomes. Statistically, the strong correlation and significant p-value provide robust evidence against the null hypothesis, affirming that the relationship observed is unlikely to be due to random chance.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_tokens": 600
+      }
+    },
+    "qwen3_4b": {
+      "text": "### Missing Data Analysis  \nMissing data was observed in **pack_years** (60 out of 114 rows, ~52.6% missing), exceeding the imputation threshold (0.2). The data was imputed using **iterative imputation** for *pack_years*, while *overall_survival_months* had no missing values. The missingness is not random (MCAR not tested), and results may be sensitive to imputation assumptions.\n\n### Pre-Test Diagnostics  \nGroup sizes are balanced (n = 114). Normality tests (Wilcoxon) for both *pack_years* and *overall_survival_months* show strong deviations from normality (p < 0.001), with W-statistics near 1.0. Since both variables violate normality assumptions, parametric tests are not appropriate.\n\n### Test Selection Rationale  \nGiven non-normality, the **Spearman correlation** was selected. It is robust to non-normality and monotonic relationships, making it suitable for ordinal or skewed data.\n\n### Test Results  \nThe Spearman correlation coefficient is **r = \u20130.647** (p < 0.000001), indicating a **strong, negative monotonic relationship** between pack years and overall survival. This means higher smoking history is associated with shorter survival times.\n\n### Interpretation  \nThe result is statistically significant and clinically meaningful. Patients with higher pack-year smoking history have significantly worse survival outcomes. The effect size (r = \u20130.65) suggests a substantial association, even in the presence of non-normal data.  \n\n*Note: No warnings were raised, and the imputation was applied appropriately. The analysis is valid under the chosen non-parametric framework.*",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    }
+  },
+  "eval": {}
+}

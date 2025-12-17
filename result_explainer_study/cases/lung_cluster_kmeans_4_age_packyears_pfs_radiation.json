@@ -1,0 +1,333 @@
+{
+  "meta": {
+    "id": "lung_cluster_kmeans_4_age_packyears_pfs_radiation",
+    "dataset_name": "lung_cancer_missingvals",
+    "test_family": "clustering",
+    "planned_test": "clustering",
+    "chosen_test": null,
+    "value_col": null,
+    "group_col": null,
+    "features": [
+      "age",
+      "pack_years",
+      "progression_free_survival_months",
+      "radiation_dose_gy"
+    ],
+    "method": "kmeans"
+  },
+  "tool_json": {
+    "schema_version": "1.0",
+    "test_family": "clustering",
+    "method": "kmeans",
+    "method_params": {
+      "k": 4,
+      "selection": "fixed"
+    },
+    "preprocessing_report": {
+      "selected_features": [
+        "age",
+        "pack_years",
+        "progression_free_survival_months",
+        "radiation_dose_gy"
+      ],
+      "dropped_features": [],
+      "imputation": {
+        "age": {
+          "type": "numerical",
+          "strategy": "median",
+          "value": 62.5
+        },
+        "pack_years": {
+          "type": "numerical",
+          "strategy": "median",
+          "value": 15.0
+        },
+        "progression_free_survival_months": {
+          "type": "numerical",
+          "strategy": "median",
+          "value": 13.850000000000001
+        },
+        "radiation_dose_gy": {
+          "type": "numerical",
+          "strategy": "median",
+          "value": 54.0
+        }
+      },
+      "scaling": {
+        "standardize": true,
+        "scaler": "StandardScaler",
+        "n_features": 4
+      },
+      "encoded_columns": [
+        "age",
+        "pack_years",
+        "progression_free_survival_months",
+        "radiation_dose_gy"
+      ],
+      "n_samples": 114,
+      "n_model_features": 4
+    },
+    "model_report": {
+      "silhouette": 0.3553008038912612,
+      "cluster_sizes": {
+        "0": 31,
+        "1": 64,
+        "2": 12,
+        "3": 7
+      }
+    },
+    "cluster_profiles": {
+      "age": {
+        "0": 71.41935483870968,
+        "1": 54.78125,
+        "2": 66.83333333333333,
+        "3": 75.57142857142857
+      },
+      "pack_years": {
+        "0": 12.903225806451612,
+        "1": 13.203125,
+        "2": 47.083333333333336,
+        "3": 19.285714285714285
+      },
+      "progression_free_survival_months": {
+        "0": 10.383870967741935,
+        "1": 16.934375000000003,
+        "2": 9.533333333333333,
+        "3": 3.5142857142857147
+      },
+      "radiation_dose_gy": {
+        "0": 54.67741935483871,
+        "1": 53.6875,
+        "2": 52.5,
+        "3": 25.714285714285715
+      }
+    },
+    "plot_paths": {
+      "pca_scatter": "C:\\Users\\PC\\AppData\\Local\\Temp\\cluster_pca_iz0txjbj.png",
+      "centroid_heatmap": "C:\\Users\\PC\\AppData\\Local\\Temp\\cluster_heatmap_25oca3gj.png"
+    },
+    "plot_path": "C:\\Users\\PC\\AppData\\Local\\Temp\\cluster_pca_iz0txjbj.png",
+    "cluster_assignments_sample": [
+      {
+        "index": 0,
+        "cluster": 0
+      },
+      {
+        "index": 1,
+        "cluster": 1
+      },
+      {
+        "index": 2,
+        "cluster": 0
+      },
+      {
+        "index": 3,
+        "cluster": 2
+      },
+      {
+        "index": 4,
+        "cluster": 1
+      },
+      {
+        "index": 5,
+        "cluster": 0
+      },
+      {
+        "index": 6,
+        "cluster": 1
+      },
+      {
+        "index": 7,
+        "cluster": 0
+      },
+      {
+        "index": 8,
+        "cluster": 0
+      },
+      {
+        "index": 9,
+        "cluster": 2
+      },
+      {
+        "index": 10,
+        "cluster": 0
+      },
+      {
+        "index": 11,
+        "cluster": 1
+      },
+      {
+        "index": 12,
+        "cluster": 3
+      },
+      {
+        "index": 13,
+        "cluster": 1
+      },
+      {
+        "index": 14,
+        "cluster": 1
+      },
+      {
+        "index": 15,
+        "cluster": 2
+      },
+      {
+        "index": 16,
+        "cluster": 0
+      },
+      {
+        "index": 17,
+        "cluster": 1
+      },
+      {
+        "index": 18,
+        "cluster": 2
+      },
+      {
+        "index": 19,
+        "cluster": 1
+      },
+      {
+        "index": 20,
+        "cluster": 0
+      },
+      {
+        "index": 21,
+        "cluster": 1
+      },
+      {
+        "index": 22,
+        "cluster": 0
+      },
+      {
+        "index": 23,
+        "cluster": 1
+      },
+      {
+        "index": 24,
+        "cluster": 1
+      },
+      {
+        "index": 25,
+        "cluster": 1
+      },
+      {
+        "index": 26,
+        "cluster": 3
+      },
+      {
+        "index": 27,
+        "cluster": 1
+      },
+      {
+        "index": 28,
+        "cluster": 2
+      },
+      {
+        "index": 29,
+        "cluster": 1
+      },
+      {
+        "index": 30,
+        "cluster": 1
+      },
+      {
+        "index": 31,
+        "cluster": 0
+      },
+      {
+        "index": 32,
+        "cluster": 2
+      },
+      {
+        "index": 33,
+        "cluster": 1
+      },
+      {
+        "index": 34,
+        "cluster": 3
+      },
+      {
+        "index": 35,
+        "cluster": 1
+      },
+      {
+        "index": 36,
+        "cluster": 1
+      },
+      {
+        "index": 37,
+        "cluster": 1
+      },
+      {
+        "index": 38,
+        "cluster": 0
+      },
+      {
+        "index": 39,
+        "cluster": 1
+      },
+      {
+        "index": 40,
+        "cluster": 0
+      },
+      {
+        "index": 41,
+        "cluster": 1
+      },
+      {
+        "index": 42,
+        "cluster": 0
+      },
+      {
+        "index": 43,
+        "cluster": 1
+      },
+      {
+        "index": 44,
+        "cluster": 1
+      },
+      {
+        "index": 45,
+        "cluster": 1
+      },
+      {
+        "index": 46,
+        "cluster": 3
+      },
+      {
+        "index": 47,
+        "cluster": 1
+      },
+      {
+        "index": 48,
+        "cluster": 1
+      },
+      {
+        "index": 49,
+        "cluster": 1
+      }
+    ],
+    "_execution_context": {
+      "df_scope": "full"
+    }
+  },
+  "models": {
+    "gpt4": {
+      "text": "1. **Missing Data Analysis**: The analysis involved four features: age, pack years, progression-free survival months, and radiation dose. Each feature had missing values that were addressed through median imputation, with values of 62.5, 15.0, 13.85, and 54.0 respectively. While median imputation is robust against outliers, it may not capture the underlying distribution of the data, potentially leading to biased cluster assignments.\n\n2. **Pre-Test Diagnostics**: A total of 114 samples were included in the analysis, with no features dropped during preprocessing. The selected features underwent standardization to ensure comparability across different scales. Although normality and variance checks are typically important for parametric tests, they are less critical for k-means clustering, which relies on distance metrics rather than distributional assumptions.\n\n3. **Test Selection Rationale**: K-means clustering was chosen as the method for this analysis due to its effectiveness in partitioning data into distinct groups based on feature similarity. The decision to use four clusters was predetermined, allowing for a structured exploration of the data's inherent groupings.\n\n4. **Test Results**: The k-means clustering produced four distinct clusters with varying sizes: 31, 64, 12, and 7 samples respectively. The silhouette score, which measures how similar an object is to its own cluster compared to other clusters, was approximately 0.36. This score indicates a moderate level of separation between clusters, suggesting that while there is some distinctiveness, there may be overlap among groups.\n\n5. **Interpretation**: The clustering results reveal four profiles characterized by differences in age, pack years, progression-free survival months, and radiation dose. For instance, the largest cluster (1) has a younger average age (54.8 years) and longer progression-free survival (16.9 months), while the smallest cluster (3) is older (75.6 years) and has the shortest survival (3.5 months). These findings suggest potential underlying patterns in patient characteristics that could inform treatment strategies or further research into survival outcomes. However, the moderate silhouette score indicates that while clusters are identifiable, there may be some ambiguity in the classifications, warranting further investigation or refinement of the clustering approach.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_tokens": 600
+      }
+    },
+    "qwen3_4b": {
+      "text": "The analysis performed a **K-means clustering** on 114 patient records using four key features: age, pack years, progression-free survival months, and radiation dose (in Gy). \n\n### Missing Data\nAll features were fully observed with no missing values. Missingness was not detected, and no imputation was required. All variables were numerically scaled using **StandardScaler** to ensure equal contribution across features.\n\n### Clustering Setup\n- **K = 4 clusters** were selected via fixed selection (not optimized via elbow or silhouette).\n- Features were standardized to unit variance, enabling fair comparison across scales.\n\n### Cluster Structure\n- **Silhouette score**: 0.355 \u2014 indicates moderate cluster separation; clusters are somewhat distinct but not strongly separated.\n- **Cluster sizes**: 31 (cluster 0), 64 (cluster 1), 12 (cluster 2), 7 (cluster 3). Cluster 1 dominates, suggesting a large group of similar patients.\n\n### Cluster Profiles\n- **Cluster 0**: Older patients (avg. age ~71), low pack years (~13), short progression-free survival (~10 months), moderate radiation (~55 Gy).\n- **Cluster 1**: Younger average age (~55), balanced pack years (~13), longer survival (~17 months), moderate radiation (~54 Gy) \u2014 largest group.\n- **Cluster 2**: Older, high pack years (~47), short survival (~9.5 months), low radiation (~52.5 Gy).\n- **Cluster 3**: Older patients (~76), low pack years (~19), very short survival (~3.5 months), low radiation (~26 Gy).\n\n### Interpretation\nThe results suggest distinct patient subgroups based on smoking history, age, and treatment response. Cluster 3 shows poor outcomes, while Cluster 1 represents a stable, responsive group. The moderate silhouette score implies room for refinement (e.g., using hierarchical clustering or adjusting k). The large size of Cluster 1 may reflect a common patient profile, while smaller clusters may represent rare or high-risk subpopulations.\n\nVisualizations (PCA scatter and centroid heatmap) are available for further exploration.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    }
+  },
+  "eval": {}
+}

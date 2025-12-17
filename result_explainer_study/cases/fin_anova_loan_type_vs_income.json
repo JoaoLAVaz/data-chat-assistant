@@ -1,0 +1,202 @@
+{
+  "meta": {
+    "id": "fin_anova_loan_type_vs_income",
+    "dataset_name": "dataset_finance_risk",
+    "test_family": "anova",
+    "planned_test": "anova",
+    "chosen_test": "kruskal_wallis",
+    "value_col": "income",
+    "group_col": "loan_type"
+  },
+  "tool_json": {
+    "schema_version": "1.0",
+    "test_family": "anova",
+    "chosen_test": "kruskal_wallis",
+    "test_name": "Kruskal\u2013Wallis H",
+    "stats": {
+      "H": 244.2563995013702,
+      "p_value": 1.1239688965596047e-51,
+      "df": 4
+    },
+    "effect_size": {
+      "name": "epsilon_squared",
+      "value": 0.6082440493705574
+    },
+    "groups": {
+      "auto": {
+        "n": 88,
+        "mean": 63775.13988636364,
+        "sd": 13510.074403995282,
+        "median": 63409.45,
+        "iqr": 21833.134999999995
+      },
+      "credit_card": {
+        "n": 104,
+        "mean": 54301.46983730082,
+        "sd": 11950.385758722827,
+        "median": 55243.455,
+        "iqr": 19254.524307038148
+      },
+      "mortgage": {
+        "n": 97,
+        "mean": 95219.33402061857,
+        "sd": 11113.768654667607,
+        "median": 94153.72,
+        "iqr": 17494.910000000003
+      },
+      "personal": {
+        "n": 73,
+        "mean": 50941.07068493151,
+        "sd": 10545.581885431575,
+        "median": 50268.52,
+        "iqr": 11874.119999999995
+      },
+      "student": {
+        "n": 38,
+        "mean": 41755.84359548271,
+        "sd": 18238.68501383344,
+        "median": 37044.025,
+        "iqr": 36399.492097889146
+      }
+    },
+    "assumptions": {
+      "normality": {
+        "per_group": {
+          "auto": {
+            "n": 88,
+            "stat": 0.9920373499400469,
+            "p": 0.8765292179078941,
+            "ok": true,
+            "note": null
+          },
+          "credit_card": {
+            "n": 104,
+            "stat": 0.9459127355176241,
+            "p": 0.0003374118309141077,
+            "ok": false,
+            "note": null
+          },
+          "mortgage": {
+            "n": 97,
+            "stat": 0.9834674719249981,
+            "p": 0.2634146366823325,
+            "ok": true,
+            "note": null
+          },
+          "personal": {
+            "n": 73,
+            "stat": 0.9660399787721791,
+            "p": 0.046325022683174254,
+            "ok": false,
+            "note": null
+          },
+          "student": {
+            "n": 38,
+            "stat": 0.8549550650153745,
+            "p": 0.00017116817506874186,
+            "ok": false,
+            "note": null
+          }
+        },
+        "any_non_normal": true,
+        "tested_groups": 5,
+        "notes": []
+      },
+      "variance": {
+        "note": "Not applicable for Kruskal\u2013Wallis."
+      }
+    },
+    "warnings": [],
+    "plot_path": "C:\\Users\\PC\\AppData\\Local\\Temp\\anova_21f2thp3.png",
+    "missing_data_report": {
+      "columns": [
+        "loan_type",
+        "income"
+      ],
+      "rows_before": 400,
+      "total_missing": 37,
+      "missing_by_column": {
+        "loan_type": 0,
+        "income": 37
+      },
+      "missing_rate": 0.04625,
+      "policy": "simple_impute",
+      "alpha": 0.05,
+      "scope": "hybrid",
+      "mcar": {
+        "available": false,
+        "stat": null,
+        "df": null,
+        "p": null,
+        "note": "No MCAR function found in this Pingouin version.",
+        "numeric_cols_used": [
+          "income",
+          "record_id",
+          "credit_score",
+          "debt_ratio",
+          "default_flag"
+        ]
+      },
+      "mcar_proxy": {
+        "available": true,
+        "method": "chi2",
+        "p": 4.2163072444251705e-16,
+        "note": null
+      },
+      "imputations": {
+        "loan_type": {
+          "strategy": "mode",
+          "value": "credit_card"
+        },
+        "income": {
+          "strategy": "iterative"
+        }
+      },
+      "warning": null,
+      "config": {
+        "impute_threshold": 0.2,
+        "extreme_threshold": 0.5,
+        "force_impute": false,
+        "max_cat_cardinality": 50,
+        "max_pred_missing": 0.5
+      },
+      "predictors": {
+        "selected": [
+          "record_id",
+          "loan_type",
+          "credit_score",
+          "debt_ratio",
+          "default_flag"
+        ],
+        "dropped": [],
+        "encoded_features": 8
+      },
+      "imputer_details": {
+        "n_features": 9,
+        "max_iter": 10
+      },
+      "rows_after": 400,
+      "rows_dropped": 0
+    },
+    "_execution_context": {
+      "df_scope": "scoped"
+    }
+  },
+  "models": {
+    "gpt4": {
+      "text": "1. **Missing Data Analysis**: The dataset initially contained 400 rows, with 37 missing entries, resulting in a missing rate of approximately 4.6%. The missing data was primarily in the 'income' column, while 'loan_type' had no missing values. Imputation was performed using a hybrid approach: the 'loan_type' was filled with the mode (most common value being 'credit_card'), and 'income' was addressed through an iterative imputation method. It is important to note that the missing data was not found to be Missing Completely At Random (MCAR), as indicated by a significant chi-squared test, which could affect the validity of the imputation.\n\n2. **Pre-Test Diagnostics**: The analysis involved five groups: auto, credit card, mortgage, personal, and student, with sample sizes of 88, 104, 97, 73, and 38, respectively. Normality tests revealed that three groups (auto, mortgage) met the normality assumption, while the credit card, personal, and student groups did not. This violation of normality suggests that parametric tests may not be appropriate. Variance homogeneity checks were not applicable for the chosen test.\n\n3. **Test Selection Rationale**: Given the non-normal distribution of several groups and the differing sample sizes, the Kruskal-Wallis H test was selected. This non-parametric test is suitable for comparing medians across multiple groups without the assumption of normality, making it a robust choice for this analysis.\n\n4. **Test Results**: The Kruskal-Wallis H test yielded a test statistic of approximately 244.26 with a p-value of less than 1.12e-51, indicating a highly significant difference among the groups. The degrees of freedom for the test were 4. The effect size, measured by epsilon squared, was approximately 0.608, suggesting a large effect.\n\n5. **Interpretation**: The findings indicate that there are statistically significant differences in income across the different loan types. The large effect size implies that these differences are not only statistically significant but also practically meaningful, suggesting that the type of loan has a substantial impact on income levels. This information could be vital for financial institutions in tailoring products and understanding customer demographics.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_tokens": 600
+      }
+    },
+    "qwen3_4b": {
+      "text": "### Missing Data Analysis  \nMissing data was found only in the `income` column (37 missing values, 9.25% of rows). The missingness was not random (MCAR), as confirmed by a chi-squared test (p < 0.0001). Missing values were imputed using iterative imputation for `income`, while `loan_type` was imputed using mode imputation (mode = \"credit_card\"). No rows were dropped; data integrity was preserved.\n\n### Pre-Test Diagnostics  \nFive groups were compared: auto, credit_card, mortgage, personal, and student. Group sizes range from 38 to 104. Normality was tested via Shapiro-Wilk; while most groups (auto, mortgage) met normality assumptions (p > 0.05), credit_card, personal, and student showed significant deviations (p < 0.05). However, **Kruskal-Wallis** is robust to non-normality, so this is acceptable.\n\n### Test Selection Rationale  \nA Kruskal-Wallis H test was selected because the data violate normality assumptions in several groups. This non-parametric test compares medians across independent groups without requiring normality or equal variances\u2014making it suitable for skewed or non-normal income data.\n\n### Test Results  \n- **H statistic**: 244.26 (df = 4), **p < 10\u207b\u2075\u00b9**  \n- **Effect size (\u03b5\u00b2)**: 0.61  \n- **Interpretation**: The result is statistically significant, indicating a strong difference in median income across loan types. The effect size (\u03b5\u00b2 = 0.61) suggests a large practical difference in income levels between loan types.\n\n### Interpretation  \nIncome differs significantly across loan types, with mortgage holders earning the highest median income (~$94k), followed by auto (~$64k), credit_card (~$54k), personal (~$51k), and student (~$37k). The large effect size confirms that loan type is a strong predictor of income. This supports policy decisions targeting income disparities by loan type.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    }
+  },
+  "eval": {}
+}

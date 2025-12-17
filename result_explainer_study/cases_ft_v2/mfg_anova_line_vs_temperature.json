@@ -1,0 +1,212 @@
+{
+  "meta": {
+    "id": "mfg_anova_line_vs_temperature",
+    "dataset_name": "dataset_manufacturing_sensor",
+    "test_family": "anova",
+    "planned_test": "anova",
+    "chosen_test": "anova",
+    "value_col": "temperature_c",
+    "group_col": "line_id"
+  },
+  "tool_json": {
+    "schema_version": "1.0",
+    "test_family": "anova",
+    "chosen_test": "anova",
+    "test_name": "One-way ANOVA",
+    "stats": {
+      "F": 19.136053520341335,
+      "p_value": 6.328231484636813e-11,
+      "df1": 3,
+      "df2": 196
+    },
+    "effect_size": {
+      "name": "eta_squared/omega_squared",
+      "eta_squared": 0.22654424559148784,
+      "omega_squared": 0.2138616954780156
+    },
+    "groups": {
+      "L1": {
+        "n": 56,
+        "mean": 71.80227928135496,
+        "sd": 2.86726440151204,
+        "median": 71.655,
+        "iqr": 4.249546032162058
+      },
+      "L2": {
+        "n": 46,
+        "mean": 73.746917894566,
+        "sd": 2.603555884559635,
+        "median": 73.69,
+        "iqr": 3.344999999999999
+      },
+      "L3": {
+        "n": 47,
+        "mean": 69.9102626726256,
+        "sd": 2.763592857554431,
+        "median": 69.84,
+        "iqr": 3.2849999999999966
+      },
+      "L4": {
+        "n": 51,
+        "mean": 73.04003879195224,
+        "sd": 2.268921132890866,
+        "median": 72.98,
+        "iqr": 3.375
+      }
+    },
+    "assumptions": {
+      "normality": {
+        "per_group": {
+          "L1": {
+            "n": 56,
+            "stat": 0.972833465441862,
+            "p": 0.23619300225985884,
+            "ok": true,
+            "note": null
+          },
+          "L2": {
+            "n": 46,
+            "stat": 0.9757232167850105,
+            "p": 0.4433439995963261,
+            "ok": true,
+            "note": null
+          },
+          "L3": {
+            "n": 47,
+            "stat": 0.9783527473237906,
+            "p": 0.5259884821459033,
+            "ok": true,
+            "note": null
+          },
+          "L4": {
+            "n": 51,
+            "stat": 0.9818276400667861,
+            "p": 0.6186975356746266,
+            "ok": true,
+            "note": null
+          }
+        },
+        "any_non_normal": false,
+        "tested_groups": 4,
+        "notes": []
+      },
+      "variance": {
+        "stat": 0.9998121184512918,
+        "p": 0.39405443414191166,
+        "equal_var": true,
+        "k": 4,
+        "note": null
+      }
+    },
+    "warnings": [],
+    "plot_path": "C:\\Users\\PC\\AppData\\Local\\Temp\\anova_5gdfm47e.png",
+    "missing_data_report": {
+      "columns": [
+        "line_id",
+        "temperature_c"
+      ],
+      "rows_before": 200,
+      "total_missing": 9,
+      "missing_by_column": {
+        "line_id": 0,
+        "temperature_c": 9
+      },
+      "missing_rate": 0.0225,
+      "policy": "simple_impute",
+      "alpha": 0.05,
+      "scope": "hybrid",
+      "mcar": {
+        "available": false,
+        "stat": null,
+        "df": null,
+        "p": null,
+        "note": "No MCAR function found in this Pingouin version.",
+        "numeric_cols_used": [
+          "temperature_c",
+          "record_id",
+          "thickness_mm",
+          "weight_g",
+          "vibration_rms_mm_s",
+          "pressure_psi",
+          "humidity_pct",
+          "defect_flag",
+          "failure_flag"
+        ]
+      },
+      "mcar_proxy": {
+        "available": true,
+        "method": "chi2",
+        "p": 0.560719826770304,
+        "note": null
+      },
+      "imputations": {
+        "line_id": {
+          "strategy": "mode",
+          "value": "L1"
+        },
+        "temperature_c": {
+          "strategy": "iterative"
+        }
+      },
+      "warning": null,
+      "config": {
+        "impute_threshold": 0.2,
+        "extreme_threshold": 0.5,
+        "force_impute": false,
+        "max_cat_cardinality": 50,
+        "max_pred_missing": 0.5
+      },
+      "predictors": {
+        "selected": [
+          "record_id",
+          "line_id",
+          "machine_id",
+          "shift",
+          "thickness_mm",
+          "weight_g",
+          "vibration_rms_mm_s",
+          "pressure_psi",
+          "humidity_pct",
+          "defect_flag",
+          "failure_flag"
+        ],
+        "dropped": [],
+        "encoded_features": 22
+      },
+      "imputer_details": {
+        "n_features": 23,
+        "max_iter": 10
+      },
+      "rows_after": 200,
+      "rows_dropped": 0
+    },
+    "_execution_context": {
+      "df_scope": "scoped"
+    }
+  },
+  "models": {
+    "gpt4": {
+      "text": "1. **Missing Data Analysis**: The dataset initially contained 200 rows, with a total of 9 missing values, primarily in the \"temperature_c\" column. This represents a missing rate of 2.25%. The missing data was addressed using a simple imputation strategy; the \"line_id\" was filled with its mode (\"L1\"), while \"temperature_c\" was imputed iteratively. It's important to note that while a proxy analysis indicated that the missing data may not be missing completely at random (MCAR), the imputation methods applied should be interpreted with caution, as they could introduce bias if the missingness is related to unobserved data.\n\n2. **Pre-Test Diagnostics**: The analysis involved four groups with sample sizes of 56, 46, 47, and 51 respectively. Normality tests (Shapiro-Wilk) showed that all groups met the assumption of normality, with p-values exceeding 0.05. Additionally, a test for homogeneity of variances (Levene's test) indicated equal variances across groups, further supporting the validity of the ANOVA assumptions.\n\n3. **Test Selection Rationale**: A one-way ANOVA was selected as the appropriate statistical test due to the presence of one categorical independent variable (group) with four levels and a continuous dependent variable (temperature). The assumptions of normality and homogeneity of variances were satisfied, making ANOVA a suitable choice for comparing means across the groups.\n\n4. **Test Results**: The ANOVA yielded an F-statistic of approximately 19.14, with a corresponding p-value of 6.33e-11. This indicates a statistically significant difference in means among the groups. The effect sizes, measured by eta squared (0.227) and omega squared (0.214), suggest a moderate to large effect, indicating that approximately 22.7% of the variance in temperature can be attributed to group membership.\n\n5. **Interpretation**: The findings suggest that there are significant differences in temperature across the four groups. Practically, this implies that the group classifications have a meaningful impact on temperature outcomes. Statistically, the significant p-value and substantial effect sizes indicate that the differences are not only statistically significant but also relevant in a practical context, warranting further investigation into the factors contributing to these differences.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_tokens": 600
+      }
+    },
+    "qwen3_4b": {
+      "text": "### Missing Data Analysis  \nMissing data was found in the `temperature_c` column (9 out of 200 rows, 4.5%). The missingness was not detected as MCAR (Missing Completely at Random) using a chi-square test (p = 0.56), suggesting potential selection bias. However, the data were imputed using iterative imputation for `temperature_c`, while `line_id` was imputed using mode imputation (\"L1\"). No rows were dropped; the dataset size remained unchanged.\n\n### Pre-Test Diagnostics  \nFour groups (L1–L4) were analyzed with sample sizes of 56, 46, 47, and 51. Normality was tested via Shapiro-Wilk, with p-values >0.2 in all groups, indicating no significant deviation from normality. Variance homogeneity was confirmed (Levene’s test, p = 0.39), supporting the use of ANOVA.\n\n### Test Selection Rationale  \nOne-way ANOVA was selected because it compares means across more than two independent groups under the assumption of normality and equal variance—both satisfied here. The test is appropriate for comparing average temperature across four groups.\n\n### Test Results  \nThe F-statistic was **19.14** (df1 = 3, df2 = 196), with a **p-value < 10⁻¹⁰**, indicating strong statistical significance. The effect size (η²) was **0.226**, and ω² was **0.214**, both indicating a **moderate to large** effect, meaning the group differences are practically meaningful.\n\n### Interpretation  \nThere is strong evidence that the mean temperature differs significantly across the four groups (L1–L4). The large effect size suggests that the differences are not trivial. This implies that group membership is associated with meaningful variations in temperature, warranting further investigation into potential operational or environmental causes.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    },
+    "qwen3_4b_ft_v2": {
+      "text": "### Missing Data Analysis  \nMissing data was found in the `temperature_c` column (9 missing values, 4.5% of total rows). The missingness was assessed using a chi-square test for MCAR (p = 0.56), which does not reject MCAR, suggesting missingness is random. Missing values were imputed using iterative imputation for `temperature_c`, while `line_id` was imputed using mode imputation. No rows were dropped; data integrity was preserved.\n\n### Pre-Test Diagnostics  \nThe analysis included 4 groups (L1–L4) with sample sizes of 56, 46, 47, and 51. Normality was tested per group using Shapiro-Wilk, with p-values all >0.2, indicating no significant deviation from normality. Variance homogeneity was confirmed (Levene’s test, p = 0.39), confirming equal variances across groups.\n\n### Test Selection Rationale  \nOne-way ANOVA was selected due to the independent groups, continuous outcome variable, and met assumptions of normality and equal variance. The test evaluates whether there are statistically significant differences in mean temperature across the four groups.\n\n### Test Results  \nThe F-statistic was **19.14** (df1 = 3, df2 = 196), with a **p-value < 10⁻¹⁰**, indicating strong statistical significance. The effect size (η²) was **0.22**, and ω² was **0.21**, indicating a **large effect**—meaning the differences between groups are practically and statistically meaningful.\n\n### Interpretation  \nThere is strong evidence that the mean temperature differs significantly across the four groups (L1–L4). The large effect size suggests that the differences are not trivial and may have practical implications. The results support further investigation into the factors influencing temperature variation across groups.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    }
+  },
+  "eval": {},
+  "_file_path": "cases\\mfg_anova_line_vs_temperature.json"
+}

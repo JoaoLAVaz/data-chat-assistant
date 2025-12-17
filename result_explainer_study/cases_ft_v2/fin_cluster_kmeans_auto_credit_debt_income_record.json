@@ -1,0 +1,331 @@
+{
+  "meta": {
+    "id": "fin_cluster_kmeans_auto_credit_debt_income_record",
+    "dataset_name": "dataset_finance_risk",
+    "test_family": "clustering",
+    "planned_test": "clustering",
+    "chosen_test": null,
+    "value_col": null,
+    "group_col": null,
+    "features": [
+      "credit_score",
+      "debt_ratio",
+      "income",
+      "record_id"
+    ],
+    "method": "kmeans"
+  },
+  "tool_json": {
+    "schema_version": "1.0",
+    "test_family": "clustering",
+    "method": "kmeans",
+    "method_params": {
+      "k": 2,
+      "selection": "auto"
+    },
+    "preprocessing_report": {
+      "selected_features": [
+        "credit_score",
+        "debt_ratio",
+        "income",
+        "record_id"
+      ],
+      "dropped_features": [],
+      "imputation": {
+        "credit_score": {
+          "type": "numerical",
+          "strategy": "median",
+          "value": 676.0
+        },
+        "debt_ratio": {
+          "type": "numerical",
+          "strategy": "median",
+          "value": 0.422
+        },
+        "income": {
+          "type": "numerical",
+          "strategy": "median",
+          "value": 60003.86
+        },
+        "record_id": {
+          "type": "numerical",
+          "strategy": "median",
+          "value": 200.5
+        }
+      },
+      "scaling": {
+        "standardize": true,
+        "scaler": "StandardScaler",
+        "n_features": 4
+      },
+      "encoded_columns": [
+        "credit_score",
+        "debt_ratio",
+        "income",
+        "record_id"
+      ],
+      "n_samples": 400,
+      "n_model_features": 4
+    },
+    "model_report": {
+      "silhouette": 0.3042600558204661,
+      "cluster_sizes": {
+        "0": 130,
+        "1": 270
+      }
+    },
+    "cluster_profiles": {
+      "credit_score": {
+        "0": 680.0846153846154,
+        "1": 672.2407407407408
+      },
+      "debt_ratio": {
+        "0": 0.31759230769230773,
+        "1": 0.45583333333333337
+      },
+      "income": {
+        "0": 90340.08853846154,
+        "1": 51446.58940740741
+      },
+      "record_id": {
+        "0": 216.40769230769232,
+        "1": 192.84074074074073
+      }
+    },
+    "plot_paths": {
+      "pca_scatter": "C:\\Users\\PC\\AppData\\Local\\Temp\\cluster_pca_c37aekbd.png",
+      "centroid_heatmap": "C:\\Users\\PC\\AppData\\Local\\Temp\\cluster_heatmap_w64cnb3v.png"
+    },
+    "plot_path": "C:\\Users\\PC\\AppData\\Local\\Temp\\cluster_pca_c37aekbd.png",
+    "cluster_assignments_sample": [
+      {
+        "index": 0,
+        "cluster": 1
+      },
+      {
+        "index": 1,
+        "cluster": 1
+      },
+      {
+        "index": 2,
+        "cluster": 0
+      },
+      {
+        "index": 3,
+        "cluster": 1
+      },
+      {
+        "index": 4,
+        "cluster": 1
+      },
+      {
+        "index": 5,
+        "cluster": 0
+      },
+      {
+        "index": 6,
+        "cluster": 1
+      },
+      {
+        "index": 7,
+        "cluster": 1
+      },
+      {
+        "index": 8,
+        "cluster": 1
+      },
+      {
+        "index": 9,
+        "cluster": 1
+      },
+      {
+        "index": 10,
+        "cluster": 1
+      },
+      {
+        "index": 11,
+        "cluster": 1
+      },
+      {
+        "index": 12,
+        "cluster": 0
+      },
+      {
+        "index": 13,
+        "cluster": 0
+      },
+      {
+        "index": 14,
+        "cluster": 1
+      },
+      {
+        "index": 15,
+        "cluster": 1
+      },
+      {
+        "index": 16,
+        "cluster": 0
+      },
+      {
+        "index": 17,
+        "cluster": 0
+      },
+      {
+        "index": 18,
+        "cluster": 1
+      },
+      {
+        "index": 19,
+        "cluster": 1
+      },
+      {
+        "index": 20,
+        "cluster": 1
+      },
+      {
+        "index": 21,
+        "cluster": 1
+      },
+      {
+        "index": 22,
+        "cluster": 1
+      },
+      {
+        "index": 23,
+        "cluster": 0
+      },
+      {
+        "index": 24,
+        "cluster": 1
+      },
+      {
+        "index": 25,
+        "cluster": 1
+      },
+      {
+        "index": 26,
+        "cluster": 1
+      },
+      {
+        "index": 27,
+        "cluster": 0
+      },
+      {
+        "index": 28,
+        "cluster": 1
+      },
+      {
+        "index": 29,
+        "cluster": 1
+      },
+      {
+        "index": 30,
+        "cluster": 0
+      },
+      {
+        "index": 31,
+        "cluster": 0
+      },
+      {
+        "index": 32,
+        "cluster": 1
+      },
+      {
+        "index": 33,
+        "cluster": 1
+      },
+      {
+        "index": 34,
+        "cluster": 1
+      },
+      {
+        "index": 35,
+        "cluster": 0
+      },
+      {
+        "index": 36,
+        "cluster": 1
+      },
+      {
+        "index": 37,
+        "cluster": 1
+      },
+      {
+        "index": 38,
+        "cluster": 1
+      },
+      {
+        "index": 39,
+        "cluster": 1
+      },
+      {
+        "index": 40,
+        "cluster": 1
+      },
+      {
+        "index": 41,
+        "cluster": 1
+      },
+      {
+        "index": 42,
+        "cluster": 0
+      },
+      {
+        "index": 43,
+        "cluster": 1
+      },
+      {
+        "index": 44,
+        "cluster": 1
+      },
+      {
+        "index": 45,
+        "cluster": 1
+      },
+      {
+        "index": 46,
+        "cluster": 1
+      },
+      {
+        "index": 47,
+        "cluster": 1
+      },
+      {
+        "index": 48,
+        "cluster": 1
+      },
+      {
+        "index": 49,
+        "cluster": 1
+      }
+    ],
+    "_execution_context": {
+      "df_scope": "full"
+    }
+  },
+  "models": {
+    "gpt4": {
+      "text": "1. **Missing Data Analysis**: The dataset comprised 400 samples, with missing values addressed through median imputation for the features of interest: credit score, debt ratio, income, and record ID. This approach is generally robust for numerical data, as it reduces bias by maintaining the overall distribution. However, it is important to note that median imputation may not capture the variability of the data, potentially leading to underestimation of the true variability in these features.\n\n2. **Pre-Test Diagnostics**: The analysis focused on four selected features, with no features dropped. The group sizes for the resulting clusters were 130 and 270, indicating a significant imbalance. While normality and variance checks are typically crucial for parametric tests, clustering methods like k-means do not require these assumptions to be strictly met. However, the variance in the clusters should be considered when interpreting the results.\n\n3. **Test Selection Rationale**: K-means clustering was chosen as the method for this analysis due to its effectiveness in partitioning data into distinct groups based on feature similarity. The automatic selection of two clusters (k=2) suggests a preliminary hypothesis about the presence of two distinct groups within the data, which aligns with the goal of identifying patterns in consumer financial behavior.\n\n4. **Test Results**: The clustering yielded a silhouette score of approximately 0.30, indicating a moderate level of separation between the two clusters. The first cluster (0) contained 130 samples with an average credit score of 680, a debt ratio of 0.32, and an average income of approximately $90,340. The second cluster (1) comprised 270 samples with a lower average credit score of 672, a higher debt ratio of 0.46, and an average income of about $51,447. These statistics suggest notable differences in financial profiles between the two clusters.\n\n5. **Interpretation**: The findings reveal two distinct consumer segments based on their financial characteristics. The first cluster represents individuals with higher credit scores and incomes, alongside lower debt ratios, suggesting a more stable financial situation. In contrast, the second cluster reflects individuals with lower credit scores and higher debt ratios, indicating potential financial distress. This segmentation can inform targeted financial products or interventions, as understanding these profiles is crucial for tailoring services to meet the needs of different consumer groups.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_tokens": 600
+      }
+    },
+    "qwen3_4b": {
+      "text": "The analysis performed a **K-means clustering** on 400 records using four features: credit score, debt ratio, income, and record ID.  \n\n### Missing Data & Preprocessing  \nAll features had missing values, which were imputed using the **median** value for each variable:  \n- Credit score: median = 676.0  \n- Debt ratio: median = 0.422  \n- Income: median = $60,000.86  \n- Record ID: median = 200.5  \n\nThe data were **standardized** (scaled to unit variance) to ensure equal influence of all features.  \n\n### Clustering Results  \n- **K = 2 clusters** were selected automatically via the \"auto\" method.  \n- Cluster sizes: **130 in cluster 0**, **270 in cluster 1** (majority group).  \n- **Silhouette score**: 0.304 → indicates moderate cluster separation (values near 1 are ideal).  \n\n### Cluster Profiles  \n- **Cluster 0** (smaller group):  \n  - Higher income (~$90,340) and credit score (~680)  \n  - Lower debt ratio (~0.32)  \n- **Cluster 1** (larger group):  \n  - Lower income (~$51,447) and credit score (~672)  \n  - Higher debt ratio (~0.46)  \n\n### Interpretation  \nThe two clusters represent distinct customer segments:  \n- **Cluster 0**: Likely financially stable, high-income individuals with strong credit.  \n- **Cluster 1**: Possibly financially constrained, with higher debt relative to income.  \n\nThe results suggest a clear segmentation based on financial health. While the silhouette score is moderate, the differences in income and debt ratio support meaningful separation. The cluster assignments are visualized in PCA and centroid heatmaps (available in the output paths).  \n\nThis clustering can support targeted financial product recommendations or credit risk modeling.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    },
+    "qwen3_4b_ft_v2": {
+      "text": "### Clustering Analysis Summary\n\n**1. Missing Data Analysis**  \nMissing values were imputed using median imputation for all numerical features:  \n- `credit_score`: median = 676.0  \n- `debt_ratio`: median = 0.422  \n- `income`: median = 60,003.86  \n- `record_id`: median = 200.5  \nNo features were dropped. All data points were retained (n = 400).\n\n**2. Pre-Test Diagnostics**  \n- Features selected: `credit_score`, `debt_ratio`, `income`, `record_id`  \n- Data was standardized (scaled to zero mean and unit variance) to ensure equal influence of features.  \n- 400 samples, 4 features used in clustering.\n\n**3. Test Selection Rationale**  \nK-means clustering was chosen due to its simplicity, interpretability, and suitability for continuous, numerical data with spherical clusters. The number of clusters (k=2) was selected automatically via the \"auto\" selection method.\n\n**4. Test Results**  \n- **Silhouette Score**: 0.304 → Indicates moderate cluster separation. Values near 1 indicate strong separation; values below 0.2 suggest overlap.  \n- **Cluster Sizes**: Cluster 0 (n=130), Cluster 1 (n=270) → Cluster 1 is significantly larger.  \n- **Cluster Profiles**:  \n  - Cluster 0: Higher income (~$90k), better credit score (~680), lower debt ratio (~0.32)  \n  - Cluster 1: Lower income (~$51k), lower credit score (~672), higher debt ratio (~0.46)\n\n**5. Interpretation**  \nThe analysis identifies two distinct customer groups:  \n- **Group 0**: Likely financially healthier individuals with higher income and better credit.  \n- **Group 1**: A larger group with lower income and higher debt burden.  \n\nThis suggests potential segmentation for targeted financial products or credit risk assessment. Further validation (e.g., domain knowledge, external validation) is recommended.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    }
+  },
+  "eval": {},
+  "_file_path": "cases\\fin_cluster_kmeans_auto_credit_debt_income_record.json"
+}

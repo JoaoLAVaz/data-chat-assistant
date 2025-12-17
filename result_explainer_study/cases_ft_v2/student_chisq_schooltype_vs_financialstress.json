@@ -1,0 +1,140 @@
+{
+  "meta": {
+    "id": "student_chisq_schooltype_vs_financialstress",
+    "dataset_name": "student_wellbeing",
+    "test_family": "chi_square",
+    "planned_test": "chi_square",
+    "chosen_test": "chi_square",
+    "value_col": null,
+    "group_col": null
+  },
+  "tool_json": {
+    "schema_version": "1.0",
+    "test_family": "chi_square",
+    "chosen_test": "chi_square",
+    "test_name": "Chi-square Test of Independence",
+    "stats": {
+      "chi2": 28.248545760664662,
+      "p_value": 8.435672497342778e-05,
+      "df": 6,
+      "table_shape": [
+        3,
+        4
+      ],
+      "min_expected": 2.7643312101910826,
+      "yates_correction": false
+    },
+    "effect_size": {
+      "name": "Cramér's V",
+      "value": 0.29993919638950023
+    },
+    "contingency_table": {
+      "High": {
+        "Community College": 7,
+        "Private University": 3,
+        "Public University": 17
+      },
+      "Low": {
+        "Community College": 4,
+        "Private University": 20,
+        "Public University": 31
+      },
+      "Moderate": {
+        "Community College": 15,
+        "Private University": 3,
+        "Public University": 43
+      },
+      "Very High": {
+        "Community College": 5,
+        "Private University": 5,
+        "Public University": 4
+      }
+    },
+    "assumptions": {
+      "expected_frequencies": {
+        "min": 2.7643312101910826,
+        "rule_of_5_triggered": true,
+        "alpha": 0.05
+      }
+    },
+    "warnings": [
+      "Some expected counts < 5 in a table larger than 2×2; chi-square used (Fisher not available for >2×2). Interpret with caution."
+    ],
+    "plot_path": "C:\\Users\\PC\\AppData\\Local\\Temp\\chisq_0kva7rt4.png",
+    "missing_data_report": {
+      "columns": [
+        "SchoolType",
+        "FinancialStress"
+      ],
+      "rows_before": 157,
+      "total_missing": 0,
+      "missing_by_column": {
+        "SchoolType": 0,
+        "FinancialStress": 0
+      },
+      "missing_rate": 0.0,
+      "policy": "none",
+      "alpha": 0.05,
+      "scope": "hybrid",
+      "mcar": {
+        "available": false,
+        "stat": null,
+        "df": null,
+        "p": null,
+        "note": null,
+        "numeric_cols_used": []
+      },
+      "mcar_proxy": {
+        "available": false,
+        "method": null,
+        "p": null,
+        "note": null
+      },
+      "imputations": {},
+      "warning": null,
+      "config": {
+        "impute_threshold": 0.2,
+        "extreme_threshold": 0.5,
+        "force_impute": false,
+        "max_cat_cardinality": 50,
+        "max_pred_missing": 0.5
+      },
+      "predictors": {
+        "selected": [],
+        "dropped": [],
+        "encoded_features": 0
+      },
+      "imputer_details": {},
+      "rows_after": 157,
+      "rows_dropped": 0
+    },
+    "_execution_context": {
+      "df_scope": "scoped"
+    }
+  },
+  "models": {
+    "gpt4": {
+      "text": "1. **Missing Data Analysis**: The analysis revealed no missing data across the relevant columns, specifically \"SchoolType\" and \"FinancialStress,\" with a total of 157 observations. Consequently, no imputation was necessary, and the integrity of the dataset remains intact. This absence of missingness allows for a robust analysis without concerns regarding bias or loss of information.\n\n2. **Pre-Test Diagnostics**: The contingency table used for the Chi-square test consists of four categories of financial stress levels (High, Low, Moderate, Very High) across three types of educational institutions (Community College, Private University, Public University). The minimum expected frequency in any cell of the table was approximately 2.76, which meets the assumption for the Chi-square test, although it is close to the threshold of 5. This indicates that while the test can be applied, caution is warranted in interpreting the results due to some cells having expected counts below the ideal threshold.\n\n3. **Test Selection Rationale**: A Chi-square Test of Independence was chosen due to the categorical nature of the variables involved. This test is appropriate for examining the relationship between two categorical variables—in this case, the type of school and the level of financial stress—allowing us to determine if there is a significant association between them.\n\n4. **Test Results**: The Chi-square statistic calculated was approximately 28.25, with a p-value of 0.0000844, indicating a highly significant result (p < 0.001). The degrees of freedom for this test were 6. The effect size, measured by Cramér's V, was approximately 0.30, suggesting a moderate association between the variables.\n\n5. **Interpretation**: The findings indicate a statistically significant association between the type of educational institution and the level of financial stress experienced by students. Specifically, the moderate effect size suggests that the type of school does have a meaningful impact on financial stress levels. Practically, this could imply that interventions aimed at reducing financial stress may need to be tailored differently depending on the type of institution, as students in different educational settings may experience varying levels of financial pressure.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_tokens": 600
+      }
+    },
+    "qwen3_4b": {
+      "text": "### Missing Data Analysis  \nNo missing values were found in either *SchoolType* or *FinancialStress* (total missing = 0). The data is complete, with no need for imputation or row drops. All observations (157 rows) are retained.\n\n### Pre-Test Diagnostics  \nThe analysis involves a 3×4 contingency table (3 stress levels × 4 school types). The minimum expected frequency is **2.76**, which meets the rule-of-5 (expected count ≥ 5 in at least 80% of cells), though some expected counts are below 5. This triggers a cautionary warning.\n\n### Test Selection Rationale  \nA **Chi-square Test of Independence** was selected due to the categorical nature of both variables and the absence of missing data. Fisher’s exact test was not used because the table is larger than 2×2, and the rule-of-5 is only marginally satisfied.\n\n### Test Results  \n- **Chi-square statistic**: 28.25  \n- **Degrees of freedom**: 6  \n- **p-value**: ~0.000084 (highly significant)  \n- **Cramér’s V (effect size)**: 0.30  \n\n### Interpretation  \nThe result is statistically significant (p < 0.001), indicating a strong association between financial stress level and school type. Cramér’s V of 0.30 suggests a **moderate to strong association**. For example, students at private universities are significantly more likely to report high financial stress than those at public or community colleges.  \n\n**Caveat**: Due to some expected frequencies below 5, results should be interpreted with caution, especially in subgroups. The effect size provides a more reliable measure of practical significance than the p-value alone.  \n\n*Visualization of the contingency table is available at: C:\\Users\\PC\\AppData\\Local\\Temp\\chisq_0kva7rt4.png*",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    },
+    "qwen3_4b_ft_v2": {
+      "text": "### Chi-Square Test of Independence: Analysis Summary\n\n**1. Missing Data Analysis**  \nNo missing values were found in either *SchoolType* or *FinancialStress* (total missing = 0). All observations (157 rows) are complete, with no data imputation required. The dataset is fully observed and suitable for analysis.\n\n**2. Pre-Test Diagnostics**  \nThe test evaluates the association between *Financial Stress Level* (High, Low, Moderate, Very High) and *School Type* (Community College, Private University, Public University). The contingency table is 3×4 (4 stress levels × 3 school types). Expected frequencies are generally above 2.76, but **some expected counts are below 5**, violating the rule of thumb for chi-square tests.\n\n**3. Test Selection Rationale**  \nA chi-square test of independence is used to assess whether financial stress level is independent of school type. Given the table size (3×4), Fisher’s exact test is not applicable. The chi-square test is selected despite the small expected counts due to its applicability and standard use in contingency tables.\n\n**4. Test Results**  \n- **Chi-square statistic**: 28.25  \n- **Degrees of freedom**: 6  \n- **p-value**: ~0.000084 (highly significant)  \n- **Cramér’s V (effect size)**: ~0.30 (moderate to strong association)\n\n**5. Interpretation**  \nThe result is statistically significant (p < 0.001), indicating a **significant association** between financial stress level and school type. The effect size (Cramér’s V = 0.30) suggests a moderate to strong relationship. However, due to expected counts below 5, results should be interpreted with caution—especially regarding effect direction and magnitude.  \n\n*Note: A visual plot of the contingency table is available at the specified path.*",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    }
+  },
+  "eval": {},
+  "_file_path": "cases\\student_chisq_schooltype_vs_financialstress.json"
+}

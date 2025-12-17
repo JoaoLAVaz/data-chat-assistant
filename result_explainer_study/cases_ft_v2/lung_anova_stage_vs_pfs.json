@@ -1,0 +1,229 @@
+{
+  "meta": {
+    "id": "lung_anova_stage_vs_pfs",
+    "dataset_name": "lung_cancer_missingvals",
+    "test_family": "anova",
+    "planned_test": "anova",
+    "chosen_test": "kruskal_wallis",
+    "value_col": "progression_free_survival_months",
+    "group_col": "stage"
+  },
+  "tool_json": {
+    "schema_version": "1.0",
+    "test_family": "anova",
+    "chosen_test": "kruskal_wallis",
+    "test_name": "Kruskal–Wallis H",
+    "stats": {
+      "H": 45.34341965034566,
+      "p_value": 1.1729246267328121e-07,
+      "df": 7
+    },
+    "effect_size": {
+      "name": "epsilon_squared",
+      "value": 0.3617303740598647
+    },
+    "groups": {
+      "Extensive": {
+        "n": 10,
+        "mean": 5.86,
+        "sd": 1.8685704577445175,
+        "median": 5.449999999999999,
+        "iqr": 2.8499999999999996
+      },
+      "IB": {
+        "n": 12,
+        "mean": 16.666666666666668,
+        "sd": 7.565752180755465,
+        "median": 20.75,
+        "iqr": 12.200000000000003
+      },
+      "IIA": {
+        "n": 13,
+        "mean": 12.576923076923077,
+        "sd": 5.729914753024087,
+        "median": 10.8,
+        "iqr": 2.5999999999999996
+      },
+      "IIB": {
+        "n": 10,
+        "mean": 18.520000000000003,
+        "sd": 4.9915038927272315,
+        "median": 20.4,
+        "iqr": 1.5500000000000007
+      },
+      "IIIA": {
+        "n": 19,
+        "mean": 14.926315789473682,
+        "sd": 3.760148062283239,
+        "median": 15.8,
+        "iqr": 3.549999999999999
+      },
+      "IIIB": {
+        "n": 11,
+        "mean": 8.136363636363637,
+        "sd": 3.56490469080808,
+        "median": 9.2,
+        "iqr": 4.8
+      },
+      "IV": {
+        "n": 29,
+        "mean": 14.772413793103448,
+        "sd": 3.596615130103396,
+        "median": 15.6,
+        "iqr": 3.3999999999999986
+      },
+      "Limited": {
+        "n": 10,
+        "mean": 13.589999999999998,
+        "sd": 1.6264822299811468,
+        "median": 13.45,
+        "iqr": 2.1500000000000004
+      }
+    },
+    "assumptions": {
+      "normality": {
+        "per_group": {
+          "Extensive": {
+            "n": 10,
+            "stat": 0.9523984424402547,
+            "p": 0.6969190649417462,
+            "ok": true,
+            "note": null
+          },
+          "IB": {
+            "n": 12,
+            "stat": 0.7952923174278042,
+            "p": 0.00828666548640461,
+            "ok": false,
+            "note": null
+          },
+          "IIA": {
+            "n": 13,
+            "stat": 0.8118827735839218,
+            "p": 0.009467484727636036,
+            "ok": false,
+            "note": null
+          },
+          "IIB": {
+            "n": 10,
+            "stat": 0.7082142533629971,
+            "p": 0.0011079429863464958,
+            "ok": false,
+            "note": null
+          },
+          "IIIA": {
+            "n": 19,
+            "stat": 0.8734817856046444,
+            "p": 0.016563753800050228,
+            "ok": false,
+            "note": null
+          },
+          "IIIB": {
+            "n": 11,
+            "stat": 0.8464463013032277,
+            "p": 0.0383521951730189,
+            "ok": false,
+            "note": null
+          },
+          "IV": {
+            "n": 29,
+            "stat": 0.8407273788545977,
+            "p": 0.0004931162660706352,
+            "ok": false,
+            "note": null
+          },
+          "Limited": {
+            "n": 10,
+            "stat": 0.9705860037618252,
+            "p": 0.8962247501465237,
+            "ok": true,
+            "note": null
+          }
+        },
+        "any_non_normal": true,
+        "tested_groups": 8,
+        "notes": []
+      },
+      "variance": {
+        "note": "Not applicable for Kruskal–Wallis."
+      }
+    },
+    "warnings": [],
+    "plot_path": "C:\\Users\\PC\\AppData\\Local\\Temp\\anova_zqfl3npg.png",
+    "missing_data_report": {
+      "columns": [
+        "stage",
+        "progression_free_survival_months"
+      ],
+      "rows_before": 114,
+      "total_missing": 0,
+      "missing_by_column": {
+        "stage": 0,
+        "progression_free_survival_months": 0
+      },
+      "missing_rate": 0.0,
+      "policy": "none",
+      "alpha": 0.05,
+      "scope": "hybrid",
+      "mcar": {
+        "available": false,
+        "stat": null,
+        "df": null,
+        "p": null,
+        "note": null,
+        "numeric_cols_used": []
+      },
+      "mcar_proxy": {
+        "available": false,
+        "method": null,
+        "p": null,
+        "note": null
+      },
+      "imputations": {},
+      "warning": null,
+      "config": {
+        "impute_threshold": 0.2,
+        "extreme_threshold": 0.5,
+        "force_impute": false,
+        "max_cat_cardinality": 50,
+        "max_pred_missing": 0.5
+      },
+      "predictors": {
+        "selected": [],
+        "dropped": [],
+        "encoded_features": 0
+      },
+      "imputer_details": {},
+      "rows_after": 114,
+      "rows_dropped": 0
+    },
+    "_execution_context": {
+      "df_scope": "scoped"
+    }
+  },
+  "models": {
+    "gpt4": {
+      "text": "1. **Missing Data Analysis**: The dataset contained no missing values across the relevant columns, ensuring that all 114 observations were utilized in the analysis. This absence of missingness eliminates concerns regarding potential biases or inaccuracies that could arise from imputation methods, allowing for a more straightforward interpretation of the results.\n\n2. **Pre-Test Diagnostics**: The analysis involved eight groups with varying sample sizes: Extensive (10), IB (12), IIA (13), IIB (10), IIIA (19), IIIB (11), IV (29), and Limited (10). Normality tests indicated that most groups did not meet the assumption of normality, as evidenced by significant p-values in several groups. Only the Extensive and Limited groups exhibited normal distributions. Variance homogeneity was not applicable for the chosen test.\n\n3. **Test Selection Rationale**: Given the violation of normality in most groups, the Kruskal-Wallis H test was selected. This non-parametric test is appropriate for comparing medians across multiple groups when the assumptions of normality and equal variances are not satisfied, making it a robust choice for this dataset.\n\n4. **Test Results**: The Kruskal-Wallis H test yielded a test statistic of approximately 45.34 with a p-value of 1.17e-07, indicating a statistically significant difference among the groups. The degrees of freedom for this test were 7. The effect size, measured using epsilon squared, was calculated to be approximately 0.36, suggesting a moderate to large effect.\n\n5. **Interpretation**: The findings suggest that there are significant differences in the distributions of the groups analyzed. The low p-value indicates that the null hypothesis, which posits that all group medians are equal, can be rejected. Practically, this implies that at least one group differs substantially from the others in terms of the measured outcome. The moderate effect size further supports the relevance of these differences, indicating that the group classifications have meaningful implications for the outcome being studied. Further post-hoc analyses may be warranted to identify specific group differences.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_tokens": 600
+      }
+    },
+    "qwen3_4b": {
+      "text": "### Missing Data Analysis  \nNo missing data was detected in either `stage` or `progression_free_survival_months` (total missing: 0). All observations (114 rows) are complete, with no need for imputation or data exclusion.\n\n### Pre-Test Diagnostics  \nThe analysis tested normality within each group using Shapiro-Wilk tests. While the \"Extensive\" and \"Limited\" groups showed normality (p > 0.05), all other groups (IB, IIA, IIB, IIIA, IIIB, IV) violated normality assumptions (p < 0.05). Since the data are not normally distributed across groups, a parametric ANOVA was not appropriate.\n\n### Test Selection Rationale  \nGiven the violation of normality assumptions and unequal variances, the **Kruskal–Wallis H test** was selected. This non-parametric test compares median differences across independent groups without assuming normality or equal variances—making it suitable for this dataset.\n\n### Test Results  \n- **Kruskal–Wallis H statistic**: 45.34, **p < 0.0001** (specifically p = 1.17 × 10⁻⁷)  \n- **Effect size (ε²)**: 0.36  \n  → Indicates that approximately **36% of the variation** in progression-free survival is explained by differences in stage groups.\n\n### Interpretation  \nThe result is statistically significant, suggesting that stage group (e.g., Extensive vs. IV) has a meaningful impact on progression-free survival. The large effect size (ε² = 0.36) implies a strong practical difference between groups. The median survival times vary widely (e.g., IB: 20.75 months vs. IIIB: 9.2 months), supporting the clinical relevance of stage classification.  \n\nNo warnings or missing data issues were found. The analysis is robust and interpretable.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    },
+    "qwen3_4b_ft_v2": {
+      "text": "### Missing Data Analysis  \nNo missing data was detected in either `stage` or `progression_free_survival_months` (0 missing values out of 114 rows). All observations are complete, with no need for imputation or data exclusion.\n\n---\n\n### Pre-Test Diagnostics  \nThe analysis includes 8 groups (Extensive, IB, IIA, IIB, IIIA, IIIB, IV, Limited) with sample sizes ranging from 10 to 29. Normality was tested using Shapiro-Wilk, but **all groups except \"Extensive\" and \"Limited\" violated normality** (p < 0.05). For example, IB, IIA, IIB, and IV groups showed significant deviations from normality. Since the data are not normally distributed, a parametric ANOVA was not appropriate.\n\n---\n\n### Test Selection Rationale  \nGiven the violation of normality assumptions, the **Kruskal–Wallis H test** was selected. This non-parametric test compares medians across independent groups and does not require normality or equal variances—making it suitable for this dataset.\n\n---\n\n### Test Results  \n- **Kruskal–Wallis H statistic**: 45.34, **p < 0.0001** (p = 1.17 × 10⁻⁷)  \n- **Effect size (ε²)**: 0.36  \n  → Indicates that **36% of the variation in progression-free survival is explained by stage group differences**.\n\n---\n\n### Interpretation  \nThe result is statistically significant, suggesting that **stage group significantly influences progression-free survival**. The large effect size (ε² = 0.36) implies a strong practical difference between groups. For instance, the IB group (mean = 16.7 months) and IIB (18.5 months) show higher survival than Extensive (5.9 months) or IIIB (8.1 months), indicating that stage classification has meaningful clinical implications.  \n\n*Note: While the test is robust to non-normality, the large effect size supports further investigation into which specific stage groups differ most.*",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    }
+  },
+  "eval": {},
+  "_file_path": "cases\\lung_anova_stage_vs_pfs.json"
+}

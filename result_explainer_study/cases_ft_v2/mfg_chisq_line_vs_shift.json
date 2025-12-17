@@ -1,0 +1,136 @@
+{
+  "meta": {
+    "id": "mfg_chisq_line_vs_shift",
+    "dataset_name": "dataset_manufacturing_sensor",
+    "test_family": "chi_square",
+    "planned_test": "chi_square",
+    "chosen_test": "chi_square",
+    "value_col": null,
+    "group_col": null
+  },
+  "tool_json": {
+    "schema_version": "1.0",
+    "test_family": "chi_square",
+    "chosen_test": "chi_square",
+    "test_name": "Chi-square Test of Independence",
+    "stats": {
+      "chi2": 6.051676883685887,
+      "p_value": 0.4174261894216012,
+      "df": 6,
+      "table_shape": [
+        4,
+        3
+      ],
+      "min_expected": 11.27,
+      "yates_correction": false
+    },
+    "effect_size": {
+      "name": "Cramér's V",
+      "value": 0.12300078133578955
+    },
+    "contingency_table": {
+      "Day": {
+        "L1": 20,
+        "L2": 21,
+        "L3": 17,
+        "L4": 20
+      },
+      "Evening": {
+        "L1": 18,
+        "L2": 19,
+        "L3": 16,
+        "L4": 20
+      },
+      "Night": {
+        "L1": 18,
+        "L2": 6,
+        "L3": 14,
+        "L4": 11
+      }
+    },
+    "assumptions": {
+      "expected_frequencies": {
+        "min": 11.27,
+        "rule_of_5_triggered": false,
+        "alpha": 0.05
+      }
+    },
+    "warnings": [],
+    "plot_path": "C:\\Users\\PC\\AppData\\Local\\Temp\\chisq_zfhdx4oj.png",
+    "missing_data_report": {
+      "columns": [
+        "line_id",
+        "shift"
+      ],
+      "rows_before": 200,
+      "total_missing": 0,
+      "missing_by_column": {
+        "line_id": 0,
+        "shift": 0
+      },
+      "missing_rate": 0.0,
+      "policy": "none",
+      "alpha": 0.05,
+      "scope": "hybrid",
+      "mcar": {
+        "available": false,
+        "stat": null,
+        "df": null,
+        "p": null,
+        "note": null,
+        "numeric_cols_used": []
+      },
+      "mcar_proxy": {
+        "available": false,
+        "method": null,
+        "p": null,
+        "note": null
+      },
+      "imputations": {},
+      "warning": null,
+      "config": {
+        "impute_threshold": 0.2,
+        "extreme_threshold": 0.5,
+        "force_impute": false,
+        "max_cat_cardinality": 50,
+        "max_pred_missing": 0.5
+      },
+      "predictors": {
+        "selected": [],
+        "dropped": [],
+        "encoded_features": 0
+      },
+      "imputer_details": {},
+      "rows_after": 200,
+      "rows_dropped": 0
+    },
+    "_execution_context": {
+      "df_scope": "scoped"
+    }
+  },
+  "models": {
+    "gpt4": {
+      "text": "1. **Missing Data Analysis**: The dataset contained 200 rows with no missing values across the relevant columns, specifically \"line_id\" and \"shift.\" This absence of missing data suggests that the analysis can proceed without concerns about imputation or bias due to missingness, which is advantageous for the integrity of the results.\n\n2. **Pre-Test Diagnostics**: The analysis involved a contingency table with dimensions 4x3, indicating four categories across one variable and three across another. The minimum expected frequency in any cell of the table was approximately 11.27, which meets the assumption for the Chi-square test that no expected frequency should be less than 5. Therefore, the conditions for conducting the Chi-square test of independence were satisfied.\n\n3. **Test Selection Rationale**: A Chi-square test of independence was chosen due to the categorical nature of the data, which aims to assess whether there is a significant association between the two categorical variables represented in the contingency table. This test is appropriate given the structure of the data and the absence of violations of its assumptions.\n\n4. **Test Results**: The Chi-square statistic calculated was approximately 6.05, with a corresponding p-value of 0.417. This indicates that the observed frequencies in the contingency table do not significantly differ from the expected frequencies under the null hypothesis of independence. The degrees of freedom for this test were 6. The effect size, measured by Cramér's V, was 0.123, suggesting a small association between the variables.\n\n5. **Interpretation**: The findings indicate that there is no statistically significant association between the two categorical variables analyzed, as evidenced by the p-value exceeding the conventional alpha level of 0.05. Practically, this means that the distribution of one variable does not depend on the other within the context of this dataset. The small effect size further reinforces the conclusion that any relationship present is weak, suggesting that the variables may operate independently in the studied population.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_tokens": 600
+      }
+    },
+    "qwen3_4b": {
+      "text": "### Missing Data Analysis  \nNo missing values were detected in the dataset (0 missing entries across 200 rows). Both columns (`line_id`, `shift`) have complete data, with no need for imputation or data cleaning.\n\n### Pre-Test Diagnostics  \nThe contingency table has dimensions 4×3 (4 shift types, 3 line IDs). The minimum expected frequency is **11.27**, well above the rule-of-5 threshold (≥5), so the chi-square test assumptions are satisfied. All groups have sufficient expected counts.\n\n### Test Selection Rationale  \nA **Chi-square Test of Independence** was selected because:  \n- The data are categorical (shift vs. line ID).  \n- Expected frequencies are sufficiently large (>5).  \n- No significant deviations from independence are expected.  \n\n### Test Results  \n- **Chi-square statistic**: 6.05  \n- **Degrees of freedom**: 6  \n- **p-value**: 0.417  \n- **Cramér’s V (effect size)**: 0.123  \n\n### Interpretation  \nThe p-value (0.417) is greater than the significance level (α = 0.05), so we **fail to reject the null hypothesis**. There is **no statistically significant association** between shift and line ID.  \n\nThe effect size (Cramér’s V = 0.123) indicates a **small association**, if any, between the variables. This suggests that shifts are equally distributed across line IDs, with no strong pattern or dependency observed.  \n\nNo warnings or assumptions were violated. The analysis is robust and interpretable.  \n\n*Visualization of the contingency table is available at: `C:\\Users\\PC\\AppData\\Local\\Temp\\chisq_zfhdx4oj.png`.*",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    },
+    "qwen3_4b_ft_v2": {
+      "text": "### Chi-Square Test of Independence – Analysis Summary\n\n**1. Missing Data Analysis**  \nNo missing values were detected in the dataset (0 missing entries across 200 rows). Both variables—`line_id` and `shift`—are fully observed. No imputation was required. The data is complete and suitable for analysis.\n\n**2. Pre-Test Diagnostics**  \nThe contingency table has 4 rows (shifts: Day, Evening, Night) and 3 columns (line IDs: L1, L2, L3, L4). The minimum expected frequency is 11.27, satisfying the chi-square test assumption (no expected count < 5). No warnings or violations of assumptions were detected.\n\n**3. Test Selection Rationale**  \nA chi-square test of independence was selected because we are examining whether the shift (Day/Evening/Night) is associated with the line ID (L1/L2/L3/L4). The test evaluates if there is a statistically significant association between these categorical variables.\n\n**4. Test Results**  \n- **Chi-square statistic**: 6.05  \n- **Degrees of freedom**: 6  \n- **p-value**: 0.417  \n- **Effect size (Cramér’s V)**: 0.123  \n\n**5. Interpretation**  \nThe p-value (0.417) is greater than the conventional threshold of 0.05, so we **fail to reject the null hypothesis**. There is **no statistically significant association** between shift and line ID. The small effect size (Cramér’s V = 0.123) indicates a weak association, if any, between the variables.  \n\nIn practical terms, the distribution of line IDs appears similar across shifts, suggesting no meaningful differences in line usage patterns by shift.  \n\n*Note: The test assumptions are fully met, and no data issues were found.*",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    }
+  },
+  "eval": {},
+  "_file_path": "cases\\mfg_chisq_line_vs_shift.json"
+}

@@ -1,0 +1,151 @@
+{
+  "meta": {
+    "id": "mfg_corr_thickness_vs_failure",
+    "dataset_name": "dataset_manufacturing_sensor",
+    "test_family": "correlation",
+    "planned_test": "correlation",
+    "chosen_test": "spearman",
+    "value_col": null,
+    "group_col": null
+  },
+  "tool_json": {
+    "schema_version": "1.0",
+    "test_family": "correlation",
+    "chosen_test": "spearman",
+    "test_name": "Spearman correlation",
+    "stats": {
+      "r": 0.021056967434750114,
+      "p_value": 0.7672631151168413,
+      "n": 200
+    },
+    "effect_size": {
+      "name": "correlation_r",
+      "value": 0.021056967434750114
+    },
+    "assumptions": {
+      "normality": {
+        "thickness_mm": {
+          "W": 0.9953049236165701,
+          "p": 0.7936684450331466,
+          "note": null
+        },
+        "failure_flag": {
+          "W": 0.1966342014071183,
+          "p": 1.6642425206829321e-28,
+          "note": null
+        },
+        "alpha": 0.05,
+        "both_normal": false
+      }
+    },
+    "warnings": [],
+    "plot_path": "C:\\Users\\PC\\AppData\\Local\\Temp\\corr_qvenbi37.png",
+    "missing_data_report": {
+      "columns": [
+        "thickness_mm",
+        "failure_flag"
+      ],
+      "rows_before": 200,
+      "total_missing": 11,
+      "missing_by_column": {
+        "thickness_mm": 9,
+        "failure_flag": 2
+      },
+      "missing_rate": 0.0275,
+      "policy": "simple_impute",
+      "alpha": 0.05,
+      "scope": "hybrid",
+      "mcar": {
+        "available": false,
+        "stat": null,
+        "df": null,
+        "p": null,
+        "note": "No MCAR function found in this Pingouin version.",
+        "numeric_cols_used": [
+          "thickness_mm",
+          "record_id",
+          "temperature_c",
+          "weight_g",
+          "vibration_rms_mm_s",
+          "pressure_psi",
+          "humidity_pct",
+          "defect_flag",
+          "failure_flag"
+        ]
+      },
+      "mcar_proxy": {
+        "available": false,
+        "method": null,
+        "p": null,
+        "note": null
+      },
+      "imputations": {
+        "thickness_mm": {
+          "strategy": "iterative"
+        },
+        "failure_flag": {
+          "strategy": "iterative"
+        }
+      },
+      "warning": null,
+      "config": {
+        "impute_threshold": 0.2,
+        "extreme_threshold": 0.5,
+        "force_impute": false,
+        "max_cat_cardinality": 50,
+        "max_pred_missing": 0.5
+      },
+      "predictors": {
+        "selected": [
+          "record_id",
+          "line_id",
+          "machine_id",
+          "shift",
+          "temperature_c",
+          "thickness_mm",
+          "weight_g",
+          "vibration_rms_mm_s",
+          "pressure_psi",
+          "humidity_pct",
+          "defect_flag"
+        ],
+        "dropped": [],
+        "encoded_features": 22
+      },
+      "imputer_details": {
+        "n_features": 23,
+        "max_iter": 10
+      },
+      "rows_after": 200,
+      "rows_dropped": 0
+    },
+    "_execution_context": {
+      "df_scope": "scoped"
+    }
+  },
+  "models": {
+    "gpt4": {
+      "text": "### Missing Data Analysis\nIn this analysis, a total of 200 observations were initially available, with 11 missing values across two variables: thickness_mm (9 missing) and failure_flag (2 missing), resulting in a missing rate of approximately 2.75%. Given that the missing data rate is below the 20% threshold, a simple imputation strategy was employed, specifically using an iterative method for both variables. However, the analysis did not assess whether the missing data was Missing Completely At Random (MCAR), as the relevant tests were unavailable in the current version of the analysis tool. This limitation should be noted, as it may affect the validity of the imputation.\n\n### Pre-Test Diagnostics\nThe analysis involved two variables: thickness_mm and failure_flag. The normality of these variables was assessed using the Shapiro-Wilk test. The results indicated that thickness_mm did not significantly deviate from normality (W = 0.995, p = 0.794), while failure_flag exhibited significant non-normality (W = 0.197, p < 0.001). Since the assumption of normality was violated for one of the variables, a non-parametric test was deemed appropriate. \n\n### Test Selection Rationale\nGiven the violation of normality for the failure_flag variable, the Spearman correlation was selected for this analysis. This test is suitable for assessing monotonic relationships between two variables without the assumption of normal distribution, making it ideal for the current dataset.\n\n### Test Results\nThe Spearman correlation coefficient (r) was calculated to be approximately 0.021, with a p-value of 0.767. This indicates a very weak positive correlation between thickness_mm and failure_flag. The sample size for this analysis was 200 observations.\n\n### Interpretation\nThe findings suggest that there is no statistically significant correlation between the thickness of the material and the failure flag status (p > 0.05). The effect size, represented by the correlation coefficient of 0.021, further supports this conclusion, indicating that the relationship is negligible. Practically, this means that variations in material thickness do not appear to influence the likelihood of failure, which may have implications for quality control and material selection processes in relevant applications.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_tokens": 600
+      }
+    },
+    "qwen3_4b": {
+      "text": "### Missing Data Analysis  \nMissing data was observed in two columns: `thickness_mm` (9 missing) and `failure_flag` (2 missing), totaling 11 missing values (5.5% of 200 rows). The missingness was imputed using **iterative imputation** for both variables, with no rows dropped. No MCAR (Missing Completely at Random) test was available in the current version of Pingouin, so no formal assessment of missingness mechanism was performed.\n\n### Pre-Test Diagnostics  \nThe sample size is **n = 200**, which is sufficient for robust statistical inference. Normality checks were conducted on `thickness_mm` and `failure_flag`. For `thickness_mm`, the test statistic (W = 0.995) had a p-value of 0.79, indicating no significant deviation from normality. However, the `failure_flag` variable showed strong deviation (p < 0.0001), suggesting non-normality. Since both variables are not normally distributed, a parametric test (like Pearson) would be inappropriate.\n\n### Test Selection Rationale  \nGiven the violation of normality assumptions, **Spearman’s rank correlation** was selected. This non-parametric test does not require normality and instead assesses monotonic relationships between variables, making it suitable for skewed or non-normal data.\n\n### Test Results  \nThe Spearman correlation between `thickness_mm` and `failure_flag` is **r = 0.021** (p = 0.767). The effect size is very small, and the p-value is high, indicating **no statistically significant association** between thickness and failure.\n\n### Interpretation  \nThere is **no evidence** of a relationship between thickness and failure in this dataset. The observed correlation is near zero, and the result is not statistically significant. This suggests that thickness variation does not appear to be a strong predictor of failure in this context.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    },
+    "qwen3_4b_ft_v2": {
+      "text": "### Missing Data Analysis  \nMissing data was observed in two columns: `thickness_mm` (9 missing) and `failure_flag` (2 missing), totaling 11 missing values (5.5% of 200 rows). The missingness was imputed using iterative imputation, with no rows dropped. No evidence of MCAR (Missing Completely at Random) was assessed due to limitations in the Pingouin version used.\n\n### Pre-Test Diagnostics  \nThe sample size is 200, with 200 observations. Normality checks were performed on `thickness_mm` and `failure_flag`. For `thickness_mm`, the test statistic (W = 0.995) had a p-value of 0.79, indicating no significant deviation from normality. For `failure_flag`, the p-value was < 0.001, suggesting strong deviation from normality. Since both variables are not normally distributed, parametric tests are not recommended.\n\n### Test Selection Rationale  \nGiven the non-normality of the data, the **Spearman correlation** was selected. This non-parametric test does not assume normality and is robust to outliers and skewed distributions, making it appropriate for this dataset.\n\n### Test Results  \nThe Spearman correlation coefficient (r) is **0.021**, with a p-value of **0.767**. This indicates a very weak, non-significant positive association between `thickness_mm` and `failure_flag`. The effect size (r = 0.021) is small, suggesting minimal linear relationship.\n\n### Interpretation  \nThere is **no statistically significant association** between thickness and failure flag (p = 0.767). The weak correlation suggests that variations in thickness do not reliably predict failure outcomes in this dataset. The result is consistent with the non-normality of the data, and the test choice was justified by the violation of normality assumptions.",
+      "gen_params": {
+        "temperature": 0.25,
+        "max_new_tokens": 600
+      }
+    }
+  },
+  "eval": {},
+  "_file_path": "cases\\mfg_corr_thickness_vs_failure.json"
+}
