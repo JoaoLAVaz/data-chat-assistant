@@ -5,7 +5,53 @@ import pandas as pd
 
 from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 from agent.graph import create_agent
-from analysis.shared.metadata import extract_metadata, create_dataset_summary_message, get_dataset_info
+from analysis.shared.metadata import (
+    extract_metadata,
+    create_dataset_summary_message,
+    get_dataset_info,
+)
+
+# Preload the explainer model at app startup (so first "detailed" run doesn't try to load)
+# NOTE: explainer routing itself is handled in agent/graph.py (and excludes recommend_tests).
+try:
+    import torch
+    import agent.nodes.explainer_node as explainer_mod
+
+    explainer_mod.init_explainer()
+
+    print("[INFO] Explainer backend preloaded.")
+    print("[INFO] CUDA available:", torch.cuda.is_available())
+
+    # _BACKEND_MODE is a module-level global in explainer_node.py
+    mode = getattr(explainer_mod, "_BACKEND_MODE", None)
+    print("[INFO] Explainer backend mode:", mode)
+
+    # Model object is also module-level
+    model = getattr(explainer_mod, "_MODEL", None)
+    if model is None:
+        print("[WARN] Explainer model object is None after init_explainer().")
+    else:
+        # For normal (cpu / cuda_full) this will show cpu or cuda:0
+        try:
+            dev = next(model.parameters()).device
+            print("[INFO] Explainer model param device:", dev)
+        except Exception as e:
+            print("[WARN] Could not inspect model parameter device:", e)
+
+        # If device_map was used, model may have hf_device_map (useful for offload debugging)
+        try:
+            hf_map = getattr(model, "hf_device_map", None)
+            if hf_map:
+                # Don't spam: show a small summary
+                unique_places = sorted(set(hf_map.values()))
+                print("[INFO] Explainer hf_device_map unique placements:", unique_places)
+        except Exception as e:
+            print("[WARN] Could not inspect hf_device_map:", e)
+
+except Exception as e:
+    # Don't hard-fail the app; detailed mode can gracefully fall back.
+    print(f"[WARN] Explainer preload failed: {type(e).__name__}: {e}")
+
 
 # ---- silence joblib/loky core-detection warning on Windows ----
 if "LOKY_MAX_CPU_COUNT" not in os.environ:
@@ -29,20 +75,16 @@ SAMPLE_DATASETS = {
 # Compile the agent once at import time
 AGENT = create_agent()
 
-
 # ------------- Helpers -------------
 
 
-def _init_agent_state(df: pd.DataFrame):
-    """Build initial AgentState dict with dataset + summary message.
-
-    Also seeds config to force the missing-data node to run in HYBRID mode.
-    """
+def _init_agent_state(df: pd.DataFrame, use_detailed: bool):
+    """Build initial AgentState dict with dataset + summary message."""
     metadata = extract_metadata(df)
     summary_msg = create_dataset_summary_message(metadata, df, n_rows=5)
 
     state = {
-        "messages": [summary_msg],   # important: seed history so LLM sees the dataset
+        "messages": [summary_msg],  # important: seed history so LLM sees the dataset
         "df": df,
         "metadata": metadata,
         "analysis_context": {},
@@ -55,10 +97,13 @@ def _init_agent_state(df: pd.DataFrame):
                 "force_impute": False,
                 "max_cat_cardinality": 50,
                 "max_pred_missing": 0.50,
-            }
+            },
+            "explainer": {
+                # controls whether we route to explainer_node after tools
+                "use_detailed": bool(use_detailed),
+            },
         },
     }
-    # Return markdown summary text for the UI and the internal state
     return summary_msg.content, state
 
 
@@ -78,8 +123,7 @@ def _get_last_ai_and_tool_ids(messages):
 
 
 def _find_plot_path_for_tool_ids(messages, tool_ids):
-    """Find the last ToolMessage whose tool_call_id is in tool_ids and has a JSON payload
-    with 'plot_path' or 'plot_paths' (list). Returns a single file path string."""
+    """Find ToolMessage (matching tool_call_id) with JSON payload containing plot_path or plot_paths."""
     if not tool_ids:
         return None
     for m in reversed(messages):
@@ -88,10 +132,8 @@ def _find_plot_path_for_tool_ids(messages, tool_ids):
                 payload = json.loads(m.content)
                 if not isinstance(payload, dict):
                     continue
-                # Prefer explicit plot_path
                 if payload.get("plot_path"):
                     return payload["plot_path"]
-                # Fallback: first path from plot_paths list
                 if isinstance(payload.get("plot_paths"), list) and payload["plot_paths"]:
                     return payload["plot_paths"][0]
             except Exception:
@@ -112,24 +154,22 @@ def _ui_summary_text(df: pd.DataFrame) -> str:
 # ------------- Gradio Callbacks -------------
 
 
-def load_csv(file):
-    """Handle CSV upload: read file, create metadata + summary, seed agent state.
-       UI shows only the compact summary and a 5-row preview."""
+def load_csv(file, use_detailed_explainer: bool):
+    """Handle CSV upload: read file, create metadata + summary, seed agent state."""
     try:
         df = pd.read_csv(file.name)
     except Exception as e:
         print(f"Error loading CSV: {e}")
         return "There was an error processing the CSV file. Please try again.", None, [], None, None
 
-    _, state = _init_agent_state(df)
+    _, state = _init_agent_state(df, use_detailed=use_detailed_explainer)
     ui_summary = _ui_summary_text(df)
     head_preview = df.head(5)
 
-    # Reset chat history UI and last_plot_path
     return ui_summary, state, [], None, head_preview
 
 
-def load_sample(selected_label, chat_history_display, last_plot_path):
+def load_sample(selected_label, chat_history_display, last_plot_path, use_detailed_explainer: bool):
     """Load one of the bundled sample datasets by label."""
     path = SAMPLE_DATASETS.get(selected_label)
     if not path:
@@ -162,20 +202,18 @@ def load_sample(selected_label, chat_history_display, last_plot_path):
             None,
         )
 
-    _, state = _init_agent_state(df)
+    _, state = _init_agent_state(df, use_detailed=use_detailed_explainer)
     ui_summary = "**Loaded sample:** " + selected_label + "  \n" + _ui_summary_text(df)
     head_preview = df.head(5)
 
-    # Reset chat & last plot when switching dataset
     return ui_summary, state, [], gr.update(visible=False), None, head_preview
 
 
-def respond(message, chat_history_display, agent_state, last_plot_path):
+def respond(message, chat_history_display, agent_state, last_plot_path, use_detailed_explainer: bool):
     """Main chat handler: append user msg, run agent, return assistant reply + optional plot.
 
     IMPORTANT: returns updated agent_state so LangGraph history is preserved across turns.
     """
-    # No dataset yet
     if not agent_state or "df" not in agent_state:
         chat_history_display.append({"role": "user", "content": message})
         chat_history_display.append(
@@ -187,21 +225,25 @@ def respond(message, chat_history_display, agent_state, last_plot_path):
             gr.update(visible=False),
             gr.update(interactive=True),
             last_plot_path,
-            agent_state,  # unchanged
+            agent_state,
         )
+
+    # Keep toggle reflected in config for this turn
+    agent_state.setdefault("config", {})
+    agent_state["config"].setdefault("explainer", {})
+    agent_state["config"]["explainer"]["use_detailed"] = bool(use_detailed_explainer)
 
     # Optimistic UI
     chat_history_display.append({"role": "user", "content": message})
     chat_history_display.append({"role": "assistant", "content": "Thinking..."})
 
-    # Hide image while processing; lock textbox
     yield (
         "",
         chat_history_display,
         gr.update(visible=False),
         gr.update(interactive=False),
         last_plot_path,
-        agent_state,  # current state while tools/LLM run
+        agent_state,
     )
 
     # Append user msg into graph state and invoke agent
@@ -215,15 +257,12 @@ def respond(message, chat_history_display, agent_state, last_plot_path):
     tool_names = []
     if last_ai and getattr(last_ai, "tool_calls", None):
         tool_names = [tc.get("name") for tc in (last_ai.tool_calls or [])]
-    print(
-        f"[DEBUG] respond: msgs_in={prev_len}, msgs_out={new_len}, "
-        f"last_ai_tools={tool_names}"
-    )
+    print(f"[DEBUG] respond: msgs_in={prev_len}, msgs_out={new_len}, last_ai_tools={tool_names}")
 
-    # Persist updated agent_state
+    # Persist updated state so next turn sees all ToolMessages/AIMessages
     agent_state = result_state
 
-    # Grab final assistant text
+    # Grab final assistant text (last AIMessage)
     final_text = ""
     for m in reversed(result_state["messages"]):
         if isinstance(m, AIMessage):
@@ -242,13 +281,12 @@ def respond(message, chat_history_display, agent_state, last_plot_path):
         except Exception as e:
             print(f"Failed to remove previous plot: {e}")
 
-    # Replace "Thinking..." with final answer
+    # Replace placeholder with final answer
     if chat_history_display and chat_history_display[-1].get("role") == "assistant":
         chat_history_display[-1] = {"role": "assistant", "content": final_text or "(No response)"}
     else:
         chat_history_display.append({"role": "assistant", "content": final_text or "(No response)"})
 
-    # Yield final UI state + updated agent_state
     yield (
         "",
         chat_history_display,
@@ -286,6 +324,12 @@ with gr.Blocks(title="LLM + Data Science Assistant") as demo:
             )
             load_sample_btn = gr.Button("Use sample dataset", variant="primary")
 
+            explainer_toggle = gr.Checkbox(
+                value=False,  # safer default on CPU-only Spaces; user can turn on
+                label="Detailed explanations (fine-tuned explainer)",
+                info="When enabled, uses the fine-tuned Qwen model for detailed explanations (analysis tools only).",
+            )
+
         with gr.Column():
             summary_output = gr.Markdown()
             preview_table = gr.Dataframe(
@@ -295,38 +339,31 @@ with gr.Blocks(title="LLM + Data Science Assistant") as demo:
                 label="Preview (first 5 rows)",
             )
 
-    # Internal agent state + last plot path live here across turns
     agent_state = gr.State(value=None)
     last_plot_state = gr.State(value=None)
 
-    # Chat widgets (OpenAI-style dicts)
     chatbot = gr.Chatbot(label="Chat with your dataset", type="messages")
     user_input = gr.Textbox(placeholder="Ask a question about your data...")
     plot_output = gr.Image(label="Generated Plot", visible=False)
 
-    # CSV upload -> load_csv
     file_upload.change(
         fn=load_csv,
-        inputs=file_upload,
+        inputs=[file_upload, explainer_toggle],
         outputs=[summary_output, agent_state, chatbot, last_plot_state, preview_table],
     )
 
-    # "Use sample dataset" -> load_sample
     load_sample_btn.click(
         fn=load_sample,
-        inputs=[sample_label, chatbot, last_plot_state],
+        inputs=[sample_label, chatbot, last_plot_state, explainer_toggle],
         outputs=[summary_output, agent_state, chatbot, plot_output, last_plot_state, preview_table],
     )
 
-    # Chat submit -> respond (streaming via generator)
     user_input.submit(
         fn=respond,
-        inputs=[user_input, chatbot, agent_state, last_plot_state],
+        inputs=[user_input, chatbot, agent_state, last_plot_state, explainer_toggle],
         outputs=[user_input, chatbot, plot_output, user_input, last_plot_state, agent_state],
         queue=True,
     )
 
-# Run the app
 if __name__ == "__main__":
-    # For local dev can set share=True, but on HF Spaces it's not needed.
     demo.launch()
