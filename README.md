@@ -21,7 +21,7 @@ The application is publicly hosted on **Hugging Face Spaces**:
 
 ## Demo Video
 
-[![Watch the demo]](https://www.youtube.com/watch?v=kJsbDPVbSEk)
+[![Watch the demo](https://img.youtube.com/vi/LIuPb356QhI/0.jpg)](https://www.youtube.com/watch?v=kJsbDPVbSEk)
 
 ---
 
