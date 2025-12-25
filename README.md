@@ -1,85 +1,165 @@
-# data-chat-assistant
-Interactive data science assistant powered by LLMs. Upload CSVs, explore datasets, and run statistical tests via natural language. Built with an agent-based architecture. A personal project to explore data science and LLM tools, including statistics and data science techniques, API and open-source LLMs, RAG, fine-tuning, etc.
+# Data Chat Assistant (v1)
 
-## Demo
-[![Watch the demo](https://img.youtube.com/vi/LIuPb356QhI/0.jpg)](https://youtu.be/LIuPb356QhI)
+An interactive **data science assistant** that lets users upload CSV datasets, explore them conversationally, and run statistically sound analyses via natural language.
 
-## Minimum Viable Product features
+The assistant combines **LLM-driven reasoning**, **formal statistical pipelines**, and an **agent-based workflow** to automatically select appropriate tests, validate assumptions, and explain results clearly.
 
-CSV upload & automatic structure analysis
+This project started as an MVP and has evolved into **v1**, featuring a fully modular statistical engine, assumption-aware test selection, clustering, and a fine-tuned open-source explainer model.
 
-Dataset summary generation (variable types, missing values, descriptive statistics)
+---
 
-Natural language commands to run:
+##  Live Demo (Hosted App)
 
-    T-tests
+The application is publicly hosted on **Hugging Face Spaces**:
 
-    ANOVA + Tukey HSD
+ **[Open the Data Chat Assistant](https://huggingface.co/spaces/Ozymandias2/data-chat-assistant)**
 
-    Chi-squared tests
+> Note: The app runs on GPU-backed infrastructure to support the fine-tuned explainer model.  
+> Go ahead and restart the space and try it out! **The restart can take a few minutes**.
 
-    Correlation tests (Pearson, Spearman)
+---
 
-Automatic result interpretation in plain language
+## Demo Video
 
-Plot generation where relevant
+[![Watch the demo]](https://www.youtube.com/watch?v=kJsbDPVbSEk)
 
-Agentized workflow for modular, extensible design
+---
 
+## What’s New in v1
+
+Version 1 significantly expands the original MVP with **statistical rigor**, **better architecture**, and **explainability**.
+
+###  Agent Architecture
+- Fully agentized workflow built with **LangGraph**
+- Clear separation of concerns:
+  - Decision-making LLM
+  - Missing-data preprocessing
+  - Statistical execution
+  - Optional detailed explanation
+- Modular and extensible by design
+
+###  Statistical Pipelines (Assumption-Aware)
+Each analysis automatically performs **pre-test diagnostics** and selects the correct method.
+
+**Supported analyses:**
+- **T-tests**
+  - Student’s t-test
+  - Welch’s t-test
+  - Mann–Whitney U (nonparametric fallback)
+- **ANOVA**
+  - One-way ANOVA
+  - Welch’s ANOVA
+  - Kruskal–Wallis (nonparametric fallback)
+- **Chi-squared analysis**
+  - Chi-square test of independence
+  - Fisher’s Exact Test (2×2 tables with low expected counts)
+- **Correlation**
+  - Pearson correlation
+  - Spearman correlation
+- **Clustering**
+  - K-means clustering
+  - PCA-based visualizations
+  - Cluster profiling
+
+###  Automatic Assumption Checks
+Before running a test, the pipeline performs:
+- Missing-data validation
+- **Normality testing** (Shapiro–Wilk)
+- **Variance homogeneity checks** (Levene / Brown–Forsythe)
+- **Expected frequency checks** for contingency tables
+
+The final test is chosen **programmatically**, not heuristically.
+
+###  Missing Data Handling
+- Dedicated missing-data node
+- Summary of missingness
+- Optional automated imputation
+- Transparent reporting of all preprocessing steps
+
+###  Smart Data Coercion
+- Automatic numerical → categorical coercion when statistically safe  
+  (e.g. binary 0/1 variables used in categorical tests)
+- Explicitly documented in tool outputs for transparency
+
+###  Fine-Tuned Explainer Model
+- Optional detailed explanation mode powered by a **fine-tuned open-source LLM**
+- Model: `Ozymandias2/qwen3-4b-instruct-stat-qlora-v2`
+- Trained specifically to:
+  - Interpret statistical pipelines
+  - Explain assumptions → test choice → results → interpretation
+- Toggleable in the UI (standard vs. detailed explanations)
+
+ **Fine-tuning details:**  
+If you’re interested in how the explainer model was trained, evaluated, and validated, check the **`result_explorer/`** directory.  
+It documents:
+- Model comparisons
+- Evaluation methodology
+- Dataset construction
+- QLoRA fine-tuning process
+
+###  Visualizations
+- Automatic plot generation where appropriate
+- PCA plots for clustering
+- Clean separation between computation and visualization
+- Plots shown in the UI without leaking filesystem paths
+
+---
 
 ## Tech Stack
 
-Python
+### Core
+- **Python**
+- **Pandas / NumPy / SciPy**
+- **Statsmodels / Pingouin**
+- **Scikit-learn**
 
-Gradio – interactive UI
+### LLM & Orchestration
+- **LangGraph** (agent workflow)
+- **LangChain Core** (message abstractions)
+- **OpenAI API** (decision LLM)
+- **Hugging Face Transformers**
+- **QLoRA fine-tuned model for explanations**
 
-Pandas – data manipulation
+### UI
+- **Gradio** (web interface)
+- **Matplotlib** (plots)
 
-Matplotlib – plots
-
-OpenAI API – LLM-powered agents using tools
-
-
-## Project Roadmap 
-
-This MVP focuses on statistical analysis and dataset exploration on a basic level.
-Upcoming version will add to the existing features.
-The planned next steps are:
-
-    More statistical tests & EDA tools
-
-    Missing value analysis (MCAR/MAR/MNAR) + automated imputation
-
-    Quality-of-life improvements in UI (loading states, better chat flow)
-
-    Machine learning models (classification & clustering)
-
-    Open-source LLM integration for privacy-friendly offline mode
-
-    RAG (Retrieval-Augmented Generation) for domain-specific Q&A
-
-    QLoRA fine-tuning for specialized analysis
+---
 
 
-## Project Structure
-    .
-    agents/                  # LLM agents for specific tasks
-    utils/                   # Helper functions
-    datasets/                # Sample CSV datasets
-    app_gradio.py            # Main Gradio app
-    requirements.txt         # Python dependencies
-    environment.yml          # Conda environment file
-    README.md
+## Installation (Local)
 
+```bash
+git clone https://github.com/JoaoLAVaz/data-chat-assistant
+cd data-chat-assistant
+pip install -r requirements.txt
+```
 
-Install using:
+Run locally:
 
-    git clone https://github.com/JoaoLAVaz/data-chat-assistant
+```bash
+python app.py
+```
+- Make sure you have a .env file with a working open ai key
+---
 
-    cd data-chat-assistant
+## Roadmap (Post-v1)
 
-    pip install -r requirements.txt
+- Multivariate tests and advanced EDA
+- Classification models with prediction endpoints
+- Model export and reuse
+- Domain-specific RAG
+- Further fine-tuning of explainer models
+- Improved UI/UX and performance optimizations
 
-and run:
+---
 
-    python app_gradio.py
+## Motivation
+
+This project is a **personal exploration of applied data science + LLM systems**, focusing on:
+- Statistical correctness
+- Transparent reasoning
+- Modular, production-style architecture
+- Practical explainability
+
+It is designed both as a usable tool and as a learning platform for modern AI-assisted data analysis.
