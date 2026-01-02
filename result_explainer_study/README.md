@@ -178,7 +178,7 @@ The goal was correction, not memorization.
 
 The second fine-tuned model (`qwen3_4b_ft_v2`) was evaluated using the same blind ensemble judges and test cases.
 
-### Final Results (placeholder)
+### Final Results 
 
 | Metric | GPT‑4.1 | Qwen‑Base | Qwen‑FT‑v2 |
 |------|--------|-----------|------------|
