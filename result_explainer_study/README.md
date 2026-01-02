@@ -76,7 +76,7 @@ We conducted a systematic baseline evaluation using a **blind ensemble judge** c
 - Claude opus 4.5  
 - Gemini3 pro  
 
-Judges never saw model identities—outputs were labeled only as *Model A* and *Model B*.
+Judges never saw model identities, outputs were labeled only as *Model A* and *Model B*.
 
 ### Evaluation Metrics
 
@@ -95,7 +95,7 @@ Judges never saw model identities—outputs were labeled only as *Model A* and *
 
 Scores were averaged across judges.
 
-### Baseline Results (placeholder)
+### Baseline Results 
 
 | Metric | GPT‑4.1 | Qwen‑3‑4B |
 |------|--------|-----------|
